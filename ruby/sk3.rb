@@ -46,7 +46,7 @@ module SK3
         end
       end
     end
-    quantity = options[key]
+    quantity = options[key.to_sym] || options[key.to_s]
     if quantity
       unless quantity > 0
         fail "Positive #{key} is required"
@@ -75,7 +75,7 @@ module SK3
         end
       end
     end
-    time = options[key]
+    time = options[key.to_sym] || options[key.to_s]
     unless time
       if alt
         time = alt
