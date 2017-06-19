@@ -1,7 +1,7 @@
 
 logger:
   dir: /tmp/unstableSK3
-  split: 10000000
+  limit: 10000000
 
 variants:
   task: CommitTask

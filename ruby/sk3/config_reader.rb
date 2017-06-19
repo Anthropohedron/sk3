@@ -66,7 +66,7 @@ module SK3
       cfg = YAML.load(config)
       logcfg = BaseLogConfig.merge(cfg["logger"] || {})
       varcfg = BaseVarConfig.merge(cfg["variants"] || {})
-      @event_queue.logger = SplitLogger.new(logcfg["split"], logcfg["dir"])
+      @event_queue.logger = SplitLogger.new(logcfg["limit"], logcfg["dir"])
       task_class    = Util.resolve(varcfg["task"])
       machine_class = Util.resolve(varcfg["machine"])
       demand_class  = Util.resolve(varcfg["demand"])

@@ -1,7 +1,7 @@
 
 logger:
   dir: /tmp/communicating_stableSK3
-  split: 10000000
+  limit: 10000000
 
 variants:
   task: CommunicatingTask
