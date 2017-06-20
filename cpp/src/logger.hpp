@@ -50,6 +50,8 @@ class SimpleLogger : public Logger {
   public:
 
   SimpleLogger(Time pause = 1000000, std::ostream &_out = std::cout);
+  SimpleLogger(Time pause, std::ostream *_out);
+  SimpleLogger(Time pause, const std::string &file);
 
   virtual ~SimpleLogger();
 
@@ -59,6 +61,7 @@ class SimpleLogger : public Logger {
   private:
 
   std::ostream &out;
+  std::ostream *outp;
   const Time pause_interval;
   Time next_pause;
 
@@ -68,7 +71,7 @@ class SplitLogger : public Logger {
 
   public:
 
-  SplitLogger(long count_limit,
+  SplitLogger(long count_limit = 1000000,
       const std::string &output_dir = "/tmp");
 
   virtual ~SplitLogger();

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "../sk3.hpp"
 
 namespace SK3 {
 namespace Config {
@@ -12,7 +13,7 @@ namespace Config {
 struct Logger {
   std::string file;
   std::string dir;
-  long limit;
+  double limit;
 };
 
 struct Variants {
@@ -44,9 +45,9 @@ struct Demand {
 struct Config {
   Logger logger;
   Variants variants;
-  std::map<std::string, Task> tasks;
-  std::map<std::string, Machine> machines;
-  std::map<std::string, Demand> demands;
+  StringMap<Task> tasks;
+  StringMap<Machine> machines;
+  StringMap<Demand> demands;
 };
 
 namespace Validate {
@@ -63,7 +64,7 @@ class Task;
 class Machine;
 class Demand;
 
-typedef std::map<std::string, shared_ptr<Task>> TaskMap;
+typedef StringPtrMap<Task> TaskMap;
 
 typedef shared_ptr<Task>    (*task_factory_t   )(const Config::Task    &,
     shared_ptr<EventQueue>);

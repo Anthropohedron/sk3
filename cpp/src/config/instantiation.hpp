@@ -16,17 +16,24 @@ class Factory {
 
   shared_ptr<Logger> createLogger(const Config::Logger &cfg);
 
-  inline std::shared_ptr<Task> createTask(const Config::Task &cfg) {
-    return taskFactory(cfg, eventQ);
-  }
+  shared_ptr<Task> createTask(const Config::Task &cfg);
+
   inline shared_ptr<Machine> createMachine(const Config::Machine &cfg) {
     return machineFactory(cfg, eventQ, tasks);
   }
+
   inline shared_ptr<Demand> createDemand(const Config::Demand &cfg) {
     return demandFactory(cfg, eventQ, tasks);
   }
 
+  void createTasks(const StringMap<Config::Task> &configs);
+  void createMachines(const StringMap<Config::Machine> &configs,
+      StringPtrMap<Machine> &out);
+  void createDemands(const StringMap<Config::Demand> &configs,
+      StringPtrMap<Demand> &out);
+
   inline const TaskMap &getTasks() { return tasks; }
+
   inline shared_ptr<EventQueue> getQueue() { return eventQ; }
 
   private:

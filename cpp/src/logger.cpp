@@ -39,10 +39,27 @@ void Logger::log_line(ostream &out,
   out << endl;
 }
 
-SimpleLogger::SimpleLogger(Time pause, ostream &_out
-    ): out(_out), pause_interval(pause), next_pause(pause) {}
+SimpleLogger::SimpleLogger(Time pause, ostream &_out):
+  out(_out),
+  outp(NULL),
+  pause_interval(pause),
+  next_pause(pause) { }
 
-SimpleLogger::~SimpleLogger() {}
+SimpleLogger::SimpleLogger(Time pause, ostream *_out):
+  out(*_out),
+  outp(_out),
+  pause_interval(pause),
+  next_pause(pause) { }
+
+SimpleLogger::SimpleLogger(Time pause, const std::string &file):
+  out(file.empty() ? cout : *(new ofstream(file))),
+  outp(file.empty() ? NULL : &out),
+  pause_interval(pause),
+  next_pause(pause) { }
+
+SimpleLogger::~SimpleLogger() {
+  if (outp) delete outp;
+}
 
 void SimpleLogger::log(const LogType type, const LogReporter &reporter,
     const Time length, const string &details) {

@@ -2,9 +2,13 @@
 #include <yaml-cpp/yaml.h>
 #include "../sk3.hpp"
 #include "representation.hpp"
+#include "instantiation.hpp"
 #include "convert.hpp"
 
 namespace SK3 {
+
+using Instantiate::Factory;
+
 namespace Config {
 
 using namespace std;
@@ -16,6 +20,7 @@ System *read(const string &filename) {
     cerr << endl << "ERROR COUNT: " << errors << endl;
     return NULL;
   }
+  Factory factory(cfg.variants);
   //TODO: instantiation
   return NULL;
 }

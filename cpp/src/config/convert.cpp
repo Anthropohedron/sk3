@@ -25,7 +25,7 @@ bool convert<SK3C::Logger>::decode(const Node &node, SK3C::Logger &rhs) {
   Node limit = node["limit"];
   rhs.file  =  file.IsScalar() ?  file.as<string>() : "";
   rhs.dir   =   dir.IsScalar() ?   dir.as<string>() : "";
-  rhs.limit = limit.IsScalar() ? limit.as<long>()   :  0;
+  rhs.limit = limit.IsScalar() ? limit.as<double>()   :  0;
   return true;
 }
 
