@@ -1,10 +1,30 @@
 #ifndef SK3_HPP
 #define SK3_HPP
 
+#include <memory>
 #include <string>
 #include <ostream>
 
+namespace std {
+
+// why isn't this in the standard library?
+
+template<typename T>
+constexpr inline bool operator<(weak_ptr<T> lhs, weak_ptr<T> rhs) {
+  return lhs.lock().get() < rhs.lock().get();
+}
+
+template<typename T>
+constexpr inline bool operator==(weak_ptr<T> lhs, weak_ptr<T> rhs) {
+  return lhs.lock().get() == rhs.lock().get();
+}
+
+} // namespace std
+
 namespace SK3 {
+
+using std::shared_ptr;
+using std::weak_ptr;
 
 class System;
 

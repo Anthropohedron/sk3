@@ -4,6 +4,7 @@
 #include <string>
 #include "sk3.hpp"
 #include "logger.hpp"
+#include "config/representation.hpp"
 
 namespace SK3 {
 
@@ -14,9 +15,13 @@ class Task : public LogReporter, SimulationComponent {
 
   public:
 
-  Task(EventQueue &_eventQ, const std::string &_name,
+  static task_factory_t factoryFor(const std::string &variant);
+
+  Task(shared_ptr<EventQueue> _eventQ, const std::string &_name,
       const Time _batch_time, const Quantity _batch_size,
       const Quantity init_buffer = 0);
+
+  virtual void init_sim();
 
   virtual const std::string name() const;
   virtual const Quantity buffer() const;
@@ -26,7 +31,7 @@ class Task : public LogReporter, SimulationComponent {
 
   protected:
 
-  EventQueue &eventQ;
+  shared_ptr<EventQueue> eventQ;
   const std::string taskName;
   const Time batch_time;
   const Quantity batch_size;

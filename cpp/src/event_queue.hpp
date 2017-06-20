@@ -32,20 +32,22 @@ class EventQueue : public SimulationComponent {
 
   public:
 
-  EventQueue(Logger *_logger, const Time _endtime = 0);
+  EventQueue(shared_ptr<Logger> _logger = NULL, const Time _endtime = 0);
   ~EventQueue();
 
   inline const Time now() const { return curtime; }
   inline const Time end() const { return endtime; }
+
+  virtual void init_sim();
 
   void add_event(Time delay, Func *func);
   void run();
 
   private:
 
-  void set_logger(Logger *_logger);
+  void set_logger(shared_ptr<Logger> _logger);
 
-  Logger *logger;
+  shared_ptr<Logger> logger;
   Time endtime;
   Time curtime;
   std::priority_queue<FuncEntry> queue;
