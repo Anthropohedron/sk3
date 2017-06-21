@@ -23,9 +23,15 @@ struct LogReporter {
   virtual const Quantity buffer() const = 0;
 };
 
+namespace Config {
+struct Logger;
+}
+
 class Logger {
 
   public:
+
+  typedef Config::Logger config_type;
 
   virtual void log(const LogType type, const LogReporter &reporter,
       const Time length, const std::string &details = "") = 0;

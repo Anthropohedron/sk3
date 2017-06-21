@@ -12,6 +12,8 @@ class Demand : public SimulationComponent {
   
   public:
 
+  typedef Config::Demand config_type;
+
   static demand_factory_t factoryFor(const std::string &variant);
 
   Demand(shared_ptr<EventQueue> _eventQ, shared_ptr<Task> _task,

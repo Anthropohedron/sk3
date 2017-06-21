@@ -13,6 +13,8 @@ class Machine : public LogReporter, SimulationComponent {
 
   public:
 
+  typedef Config::Machine config_type;
+
   static machine_factory_t factoryFor(const std::string &variant);
 
   Machine(shared_ptr<EventQueue> _eventQ, const std::string &_name,

@@ -4,8 +4,6 @@
 
 namespace SK3 {
 
-class Logger;
-
 namespace Instantiate {
 
 class Factory {
@@ -14,23 +12,14 @@ class Factory {
 
   Factory(const Config::Variants &variants);
 
-  shared_ptr<Logger> createLogger(const Config::Logger &cfg);
+  template<class Instance,
+    class ConfigClass = typename Instance::config_type>
+  shared_ptr<Instance> create(const ConfigClass &cfg);
 
-  shared_ptr<Task> createTask(const Config::Task &cfg);
-
-  inline shared_ptr<Machine> createMachine(const Config::Machine &cfg) {
-    return machineFactory(cfg, eventQ, tasks);
-  }
-
-  inline shared_ptr<Demand> createDemand(const Config::Demand &cfg) {
-    return demandFactory(cfg, eventQ, tasks);
-  }
-
-  void createTasks(const StringMap<Config::Task> &configs);
-  void createMachines(const StringMap<Config::Machine> &configs,
-      StringPtrMap<Machine> &out);
-  void createDemands(const StringMap<Config::Demand> &configs,
-      StringPtrMap<Demand> &out);
+  template<class Instance,
+    class ConfigClass = typename Instance::config_type>
+  void create(const StringMap<ConfigClass> &configs,
+      StringPtrMap<Instance> &out);
 
   inline const TaskMap &getTasks() { return tasks; }
 

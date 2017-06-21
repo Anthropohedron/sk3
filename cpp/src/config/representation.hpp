@@ -8,6 +8,12 @@
 #include "../sk3.hpp"
 
 namespace SK3 {
+
+class Logger;
+class Task;
+class Machine;
+class Demand;
+
 namespace Config {
 
 struct Logger {
@@ -59,10 +65,6 @@ int countErrors(const Config &config);
 using std::shared_ptr;
 
 class EventQueue;
-
-class Task;
-class Machine;
-class Demand;
 
 typedef StringPtrMap<Task> TaskMap;
 

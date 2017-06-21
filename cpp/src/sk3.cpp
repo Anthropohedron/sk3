@@ -35,7 +35,7 @@ Quantity internal_quantity_mul(Quantity q1, Quantity q2) {
   return (q1 * q2) / QuantityFactor;
 }
 
-}
+} // namespace SK3
 
 static inline void usage(char *prog) {
   std::cerr << "Usage: " << prog << " <time limit> <config>" << std::endl;

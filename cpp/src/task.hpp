@@ -15,6 +15,8 @@ class Task : public LogReporter, SimulationComponent {
 
   public:
 
+  typedef Config::Task config_type;
+
   static task_factory_t factoryFor(const std::string &variant);
 
   Task(shared_ptr<EventQueue> _eventQ, const std::string &_name,
