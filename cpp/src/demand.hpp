@@ -16,7 +16,7 @@ class Demand : public SimulationComponent {
 
   static demand_factory_t factoryFor(const std::string &variant);
 
-  Demand(shared_ptr<EventQueue> _eventQ, shared_ptr<Task> _task,
+  Demand(shared_ptr<EventQueue> _eventQ, weak_ptr<Task> _task,
       Quantity _quantity, Time _interval, Time _offset);
 
   virtual void init_sim();
@@ -24,7 +24,7 @@ class Demand : public SimulationComponent {
   protected:
 
   shared_ptr<EventQueue> eventQ;
-  shared_ptr<Task> task;
+  weak_ptr<Task> task;
   const Quantity quantity;
   const Time interval;
   const Time offset;

@@ -26,7 +26,7 @@ demand_factory_t Demand::factoryFor(const string &variant) {
   return factories.at(variant);
 }
 
-Demand::Demand(shared_ptr<EventQueue> _eventQ, shared_ptr<Task> _task,
+Demand::Demand(shared_ptr<EventQueue> _eventQ, weak_ptr<Task> _task,
     Quantity _quantity, Time _interval, Time _offset):
   eventQ(_eventQ),
   task(_task),
