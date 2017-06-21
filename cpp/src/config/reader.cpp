@@ -13,16 +13,14 @@ namespace Config {
 
 using namespace std;
 
-System *read(const string &filename) {
+shared_ptr<System> read(const string &filename) {
   const Config cfg = YAML::LoadFile(filename).as<Config>();
   const int errors = Validate::countErrors(cfg);
   if (errors > 0) {
     cerr << endl << "ERROR COUNT: " << errors << endl;
     return NULL;
   }
-  Factory factory(cfg.variants);
-  //TODO: instantiation
-  return NULL;
+  return Factory::createSystem(cfg);
 }
 
 } // namespace SK3::Config

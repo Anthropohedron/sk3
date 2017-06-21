@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "instantiation.hpp"
+#include "../system.hpp"
 #include "../event_queue.hpp"
 #include "../logger.hpp"
 #include "../task.hpp"
@@ -58,6 +59,24 @@ void Factory::create(const StringMap<ConfigClass> &configs,
       [&out,this](const pair<string, ConfigClass> &val) {
         out[val.first] = this->create<Instance>(val.second);
       });
+}
+
+template<>
+shared_ptr<System> Factory::create(const Config::Config &cfg) {
+  shared_ptr<Logger> logger = create<Logger>(cfg.logger);
+  eventQ->set_logger(logger);
+  StringPtrMap<Task> tasks;
+  StringPtrMap<Machine> machines;
+  StringPtrMap<Demand> demands;
+  create<Task>(cfg.tasks, tasks);
+  create<Machine>(cfg.machines, machines);
+  create<Demand>(cfg.demands, demands);
+  return make_shared<System>(eventQ, logger, tasks, machines, demands);
+}
+
+shared_ptr<System> Factory::createSystem(const Config::Config &cfg) {
+  Factory factory(cfg.variants);
+  return factory.create<System>(cfg);
 }
 
 } // namespace SK3::Instantiate

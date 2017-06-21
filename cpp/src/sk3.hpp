@@ -41,7 +41,7 @@ typedef long Quantity;
 
 namespace Config {
 
-System *read(const std::string &filename);
+shared_ptr<System> read(const std::string &filename);
 
 } // namespace SK3::Config
 

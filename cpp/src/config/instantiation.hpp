@@ -4,11 +4,17 @@
 
 namespace SK3 {
 
+class System;
+
 namespace Instantiate {
 
 class Factory {
 
   public:
+
+  static shared_ptr<System> createSystem(const Config::Config &cfg);
+
+  private:
 
   Factory(const Config::Variants &variants);
 
@@ -20,12 +26,6 @@ class Factory {
     class ConfigClass = typename Instance::config_type>
   void create(const StringMap<ConfigClass> &configs,
       StringPtrMap<Instance> &out);
-
-  inline const TaskMap &getTasks() { return tasks; }
-
-  inline shared_ptr<EventQueue> getQueue() { return eventQ; }
-
-  private:
 
   TaskMap tasks;
   shared_ptr<EventQueue> eventQ;
