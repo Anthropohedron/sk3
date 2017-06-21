@@ -8,9 +8,10 @@ using std::map;
 using std::vector;
 using std::pair;
 using std::string;
+using SK3::StringMap;
 
-template<class T> inline
-void setNames(map<string, T> dict) {
+template<class T>
+static inline void setNames(StringMap<T> &dict) {
   for_each(dict.begin(), dict.end(),
       [](pair<const string, T> &val) {
         val.second.name = val.first;
@@ -85,15 +86,16 @@ bool convert<SK3C::Demand>::decode(const Node &node, SK3C::Demand &rhs) {
       return false;
     }
     rhs.interval = interval.as<double>();
+    rhs.offset = offset.IsScalar() ? offset.as<double>() : 0;
     rhs.destination = "";
   } else if (destination.IsScalar()) {
     rhs.interval = 0;
+    rhs.offset = 0;
     rhs.destination = destination.as<string>();
   } else {
     return false;
   }
   rhs.quantity = quantity.as<double>();
-  rhs.offset = offset.IsScalar() ? offset.as<double>() : 0;
   return true;
 }
 
@@ -101,11 +103,11 @@ bool convert<SK3C::Config>::decode(const Node &node, SK3C::Config &rhs) {
   if (!node.IsMap()) return false;
   rhs.logger = node["logger"].as<SK3C::Logger>();
   rhs.variants = node["variants"].as<SK3C::Variants>();
-  rhs.tasks = node["tasks"].as<map<string, SK3C::Task>>();
+  rhs.tasks = node["tasks"].as<StringMap<SK3C::Task>>();
   setNames(rhs.tasks);
-  rhs.machines = node["machines"].as<map<string, SK3C::Machine>>();
+  rhs.machines = node["machines"].as<StringMap<SK3C::Machine>>();
   setNames(rhs.machines);
-  rhs.demands = node["demands"].as<map<string, SK3C::Demand>>();
+  rhs.demands = node["demands"].as<StringMap<SK3C::Demand>>();
   setNames(rhs.demands);
   return true;
 }
