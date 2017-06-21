@@ -13,43 +13,49 @@ struct Func {
   virtual ~Func() {};
 };
 
+class EventQueue;
+
 struct FuncEntry {
 
   bool operator<(const FuncEntry &rhs) const;
   inline void operator()() { (*func)(); }
-  ~FuncEntry() { delete func; }
 
-  inline FuncEntry(const Time _time, Func *_func): time(_time), func(_func) {}
+  inline FuncEntry(const Time _time,
+      shared_ptr<Func> _func): time(_time), func(_func) {}
 
   private:
 
+  friend EventQueue;
   Time time;
-  Func *func;
+  shared_ptr<Func> func;
 
 };
+
+namespace Instantiate {
+class Factory;
+}
 
 class EventQueue : public SimulationComponent {
 
   public:
 
-  EventQueue(shared_ptr<Logger> _logger = NULL, const Time _endtime = 0);
+  EventQueue(shared_ptr<Logger> _logger = NULL);
   ~EventQueue();
 
-  inline const Time now() const { return curtime; }
-  inline const Time end() const { return endtime; }
+  inline const Time now() const { return curTime; }
 
   virtual void init_sim();
 
   void add_event(Time delay, Func *func);
-  void run();
+  bool runOneBefore(Time endTime);
 
   private:
 
+  friend Instantiate::Factory;
   void set_logger(shared_ptr<Logger> _logger);
 
   shared_ptr<Logger> logger;
-  Time endtime;
-  Time curtime;
+  Time curTime;
   std::priority_queue<FuncEntry> queue;
 
 };

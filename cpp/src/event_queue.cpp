@@ -11,14 +11,19 @@ bool FuncEntry::operator<(const FuncEntry &rhs) const {
   return time > rhs.time;
 }
 
-EventQueue::EventQueue(shared_ptr<Logger> _logger, const Time _endtime
-    ): logger(_logger), endtime(_endtime), curtime(0) {
+EventQueue::EventQueue(shared_ptr<Logger> _logger
+    ): logger(_logger), curTime(0) {
   if (logger) {
     logger->eventQ = this;
   }
 }
 
 EventQueue::~EventQueue() { }
+
+void EventQueue::add_event(Time delay, Func *func) {
+  assert(delay > 0);
+  queue.push(FuncEntry(delay + curTime, shared_ptr<Func>(func)));
+}
 
 void EventQueue::set_logger(shared_ptr<Logger> _logger) {
   logger = _logger;
@@ -27,16 +32,14 @@ void EventQueue::set_logger(shared_ptr<Logger> _logger) {
   }
 }
 
-void EventQueue::add_event(Time delay, Func *func) {
-  assert(delay > 0);
-  queue.push(FuncEntry(delay + curtime, func));
-}
-
-void EventQueue::run() {
-  if (!logger) {
-    set_logger(make_shared<SimpleLogger>());
-  }
-  //TODO
+bool EventQueue::runOneBefore(Time endTime) {
+  if (queue.empty() || (curTime >= endTime)) return false;
+  FuncEntry entry = queue.top();
+  if (entry.time >= endTime) return false;
+  curTime = entry.time;
+  entry();
+  queue.pop();
+  return true;
 }
 
 void EventQueue::init_sim() {
