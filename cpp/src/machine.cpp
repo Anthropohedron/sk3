@@ -12,7 +12,7 @@ template<class M> shared_ptr<Machine> factory(const Config::Machine &cfg,
   map<shared_ptr<Task>, long> taskCounts;
   for_each(cfg.tasks.begin(), cfg.tasks.end(),
       [&tasks,&taskCounts](const string &taskName) {
-        taskCounts[tasks[taskName]] = 0L;
+        taskCounts[tasks.at(taskName)] = 0L;
       });
   return make_shared<M>(eventQ, cfg.name, taskCounts);
 }

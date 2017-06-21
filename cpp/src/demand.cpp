@@ -9,7 +9,7 @@ namespace {
 
 template<class D> shared_ptr<Demand> factory(const Config::Demand &cfg,
     shared_ptr<EventQueue> eventQ, TaskMap &tasks) {
-  shared_ptr<Task> task = tasks[cfg.name];
+  shared_ptr<Task> task = tasks.at(cfg.name);
   return make_shared<D>(eventQ, task,
       to_internal_quantity(cfg.quantity),
       to_internal_time(cfg.interval),
