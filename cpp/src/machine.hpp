@@ -9,6 +9,10 @@
 
 namespace SK3 {
 
+namespace Instantiate {
+class Factory;
+}
+
 class Machine : public LogReporter, SimulationComponent {
 
   public:
@@ -35,9 +39,11 @@ class Machine : public LogReporter, SimulationComponent {
 
   shared_ptr<EventQueue> eventQ;
   const std::string machineName;
+
+  friend Instantiate::Factory;
   std::map<shared_ptr<Task>, long> tasks;
-  std::queue<shared_ptr<Task>> runQ;
-  shared_ptr<Task> doing;
+  std::queue<weak_ptr<Task>> runQ;
+  weak_ptr<Task> doing;
 
 };
 
