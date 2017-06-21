@@ -11,6 +11,10 @@ namespace SK3 {
 class Machine;
 class Demand;
 
+namespace Instantiate {
+class Factory;
+}
+
 class Task : public LogReporter, SimulationComponent {
 
   public:
@@ -40,8 +44,8 @@ class Task : public LogReporter, SimulationComponent {
   Quantity taskBuffer;
   Quantity low_water_mark;
 
-  friend Machine;
-  Machine *machine;
+  friend Instantiate::Factory;
+  weak_ptr<Machine> machine;
 
   virtual bool should_enqueue();
 
