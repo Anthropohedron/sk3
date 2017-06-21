@@ -28,7 +28,12 @@ shared_ptr<Task> Factory::create(const Config::Task &cfg) {
 
 template<>
 shared_ptr<Machine> Factory::create(const Config::Machine &cfg) {
-  return machineFactory(cfg, eventQ, tasks);
+  shared_ptr<Machine> machine = machineFactory(cfg, eventQ, tasks);
+  for_each(machine->tasks.begin(), machine->tasks.end(),
+      [machine](pair<const shared_ptr<Task>, long> &val) {
+        val.first->machine = machine;
+      });
+  return machine;
 }
 
 template<>
