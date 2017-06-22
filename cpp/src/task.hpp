@@ -11,7 +11,7 @@ namespace SK3 {
 
 class Task;
 class Machine;
-class Demand;
+class DemandOrder;
 
 namespace Instantiate {
 class Factory;
@@ -44,7 +44,7 @@ public SimulationComponent {
   virtual const Quantity buffer() const;
 
   virtual void take_from_buffer(const Quantity quantity,
-      Demand *demand = NULL);
+      weak_ptr<DemandOrder> order = weak_ptr<DemandOrder>());
 
   protected:
 

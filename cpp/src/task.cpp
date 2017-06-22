@@ -42,7 +42,7 @@ const string &Task::name() const { return taskName; }
 const Quantity Task::buffer() const { return taskBuffer; }
 
 void Task::take_from_buffer(const Quantity quantity,
-    Demand *demand) {
+    weak_ptr<DemandOrder> order) {
   //TODO
 }
 
