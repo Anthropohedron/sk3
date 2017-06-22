@@ -10,8 +10,6 @@ class SimpleLogger : public Logger {
   public:
 
   SimpleLogger(Time pause = 1000000, std::ostream &_out = std::cout);
-  SimpleLogger(Time pause, std::ostream *_out);
-  SimpleLogger(Time pause, const std::string &file);
 
   virtual ~SimpleLogger();
 
@@ -21,9 +19,23 @@ class SimpleLogger : public Logger {
   private:
 
   std::ostream &out;
-  std::ostream *outp;
   const Time pause_interval;
   Time next_pause;
+
+};
+
+class SimpleFileLogger : public SimpleLogger {
+
+  public:
+
+  SimpleFileLogger(Time pause, shared_ptr<std::ostream> _out);
+  SimpleFileLogger(Time pause, const std::string &file);
+
+  virtual ~SimpleFileLogger();
+
+  private:
+
+  shared_ptr<std::ostream> outp;
 
 };
 

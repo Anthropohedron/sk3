@@ -19,7 +19,12 @@ static const char *const LogRecordType[] = {
 shared_ptr<Logger> Logger::create(const Config::Logger &cfg) {
   double limit = (cfg.limit <= 0) ? 1000000 : cfg.limit;
   if (cfg.dir.empty()) {
-    return make_shared<SimpleLogger>(to_internal_time(limit), cfg.file);
+    if (cfg.file.empty()) {
+      return make_shared<SimpleLogger>(to_internal_time(limit));
+    } else {
+      return make_shared<SimpleFileLogger>(to_internal_time(limit),
+          cfg.file);
+    }
   } else {
     return make_shared<SplitLogger>(limit, cfg.dir);
   }
@@ -50,25 +55,10 @@ void Logger::log_line(ostream &out,
 
 SimpleLogger::SimpleLogger(Time pause, ostream &_out):
   out(_out),
-  outp(NULL),
   pause_interval(pause),
   next_pause(pause) { }
 
-SimpleLogger::SimpleLogger(Time pause, ostream *_out):
-  out(*_out),
-  outp(_out),
-  pause_interval(pause),
-  next_pause(pause) { }
-
-SimpleLogger::SimpleLogger(Time pause, const std::string &file):
-  out(file.empty() ? cout : *(new ofstream(file))),
-  outp(file.empty() ? NULL : &out),
-  pause_interval(pause),
-  next_pause(pause) { }
-
-SimpleLogger::~SimpleLogger() {
-  if (outp) delete outp;
-}
+SimpleLogger::~SimpleLogger() { }
 
 void SimpleLogger::log(const LogType type, const LogReporter &reporter,
     const Time length, const string &details) {
@@ -90,6 +80,14 @@ void SimpleLogger::log(const LogType type, const LogReporter &reporter,
     next_pause += pause_interval;
   }
 }
+
+SimpleFileLogger::SimpleFileLogger(Time pause, shared_ptr<ostream> _out):
+  SimpleLogger(pause, *_out), outp(_out) { }
+
+SimpleFileLogger::SimpleFileLogger(Time pause, const string &file):
+  SimpleFileLogger(pause, make_shared<ofstream>(file)) { }
+
+SimpleFileLogger::~SimpleFileLogger() { }
 
 SplitLogger::SplitLogger(long count_limit, const string &output_dir
     ): limit(count_limit), outdir(output_dir + "/") {}
