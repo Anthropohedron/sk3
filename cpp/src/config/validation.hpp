@@ -10,17 +10,21 @@ namespace Config {
 namespace Validate {
 
 template<class T> struct CEImpl {
-  CEImpl(const std::map<std::string, Task> &tasks); // never defined
+  CEImpl(const StringMap<Task> &tasks); // never defined
   int countErrors(const T &val); // never defined
 };
 
 template<class T> struct CountErrors {
 
-  CountErrors(const std::map<std::string, Task> &tasks): impl(tasks) { }
+  CountErrors(const StringMap<Task> &tasks): impl(tasks) { }
 
   inline int operator()(int sum,
       const std::pair<const std::string, T> &val) {
     return sum + impl.countErrors(val.second);
+  }
+
+  inline int operator()(int sum, const T &val) {
+    return sum + impl.countErrors(val);
   }
 
   private:
@@ -30,33 +34,33 @@ template<class T> struct CountErrors {
 };
 
 template<> struct CEImpl<Task> {
-  inline CEImpl(const std::map<std::string, Task> &tasks) { }
+  inline CEImpl(const StringMap<Task> &tasks) { }
   int countErrors(const Task &task);
 };
 
 template<> struct CEImpl<Machine> {
 
-  inline CEImpl(const std::map<std::string, Task> &tasks): knownTasks(tasks) { }
+  inline CEImpl(const StringMap<Task> &tasks): knownTasks(tasks) { }
   int countErrors(const Machine &machine);
 
   private:
 
-  const std::map<std::string, Task> &knownTasks;
+  const StringMap<Task> &knownTasks;
   // Task -> Machine
-  std::map<std::string, std::string> assignedTasks;
+  StringMap<std::string> assignedTasks;
 
 };
 
 template<> struct CEImpl<Demand> {
 
-  inline CEImpl(const std::map<std::string, Task> &tasks): knownTasks(tasks) { }
+  inline CEImpl(const StringMap<Task> &tasks): knownTasks(tasks) { }
   int countErrors(const Demand &demand);
 
   private:
 
-  const std::map<std::string, Task> &knownTasks;
+  const StringMap<Task> &knownTasks;
   // Destination -> Source
-  std::map<std::string, std::string> edges;
+  StringMap<std::string> edges;
 
 };
 
