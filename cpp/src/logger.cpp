@@ -1,7 +1,7 @@
 #include <fstream>
-#include <iostream>
 #include <algorithm>
-#include "logger.hpp"
+#include "logger_impl.hpp"
+#include "config/representation.hpp"
 #include "event_queue.hpp"
 
 namespace SK3 {
@@ -15,6 +15,15 @@ static const char *const LogRecordType[] = {
   "RippleEnd ",
   "BufferFull"
 };
+
+shared_ptr<Logger> Logger::create(const Config::Logger &cfg) {
+  double limit = (cfg.limit <= 0) ? 1000000 : cfg.limit;
+  if (cfg.dir.empty()) {
+    return make_shared<SimpleLogger>(to_internal_time(limit), cfg.file);
+  } else {
+    return make_shared<SplitLogger>(limit, cfg.dir);
+  }
+}
 
 Logger::Logger() {}
 Logger::~Logger() {}
@@ -85,21 +94,13 @@ void SimpleLogger::log(const LogType type, const LogReporter &reporter,
 SplitLogger::SplitLogger(long count_limit, const string &output_dir
     ): limit(count_limit), outdir(output_dir + "/") {}
 
-SplitLogger::~SplitLogger() {
-  for_each(streams.begin(), streams.end(),
-      [](pair<const string, ostream *> &val) {
-        ofstream *file = dynamic_cast<ofstream *>(val.second);
-        file->close();
-        delete file;
-      });
-  streams.clear();
-}
+SplitLogger::~SplitLogger() { }
 
 ostream &SplitLogger::out(const string &key) {
   auto found = streams.find(key);
   if (found == streams.end()) {
     const string fname = outdir + key + ".log";
-    ostream *file = new ofstream(fname);
+    shared_ptr<ostream> file = make_shared<ofstream>(fname);
     streams[key] = file;
     return *file;
   } else {

@@ -44,12 +44,7 @@ shared_ptr<Demand> Factory::create(const Config::Demand &cfg) {
 
 template<>
 shared_ptr<Logger> Factory::create(const Config::Logger &cfg) {
-  double limit = (cfg.limit <= 0) ? 1000000 : cfg.limit;
-  if (cfg.dir.empty()) {
-    return make_shared<SimpleLogger>(to_internal_time(limit), cfg.file);
-  } else {
-    return make_shared<SplitLogger>(limit, cfg.dir);
-  }
+  return Logger::create(cfg);
 }
 
 template<class Instance, class ConfigClass>
