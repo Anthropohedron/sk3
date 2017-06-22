@@ -47,10 +47,17 @@ struct Machine {
 struct Demand {
   static const std::string NAME;
   std::string name;
-  std::string destination;
   double quantity;
   double interval;
   double offset;
+};
+
+struct Prereq {
+  static const std::string NAME;
+  std::string name;
+  std::string supplyingTask;
+  std::string receivingTask;
+  double quantity;
 };
 
 struct Config {
@@ -60,6 +67,7 @@ struct Config {
   StringMap<Task> tasks;
   StringMap<Machine> machines;
   StringMap<Demand> demands;
+  std::vector<Prereq> prereqs;
 };
 
 namespace Validate {

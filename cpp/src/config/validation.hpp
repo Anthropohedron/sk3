@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include "representation.hpp"
 
 namespace SK3 {
@@ -59,8 +60,19 @@ template<> struct CEImpl<Demand> {
   private:
 
   const StringMap<Task> &knownTasks;
+
+};
+
+template<> struct CEImpl<Prereq> {
+
+  inline CEImpl(const StringMap<Task> &tasks): knownTasks(tasks) { }
+  int countErrors(const Prereq &prereq);
+
+  private:
+
+  const StringMap<Task> &knownTasks;
   // Destination -> Source
-  StringMap<std::string> edges;
+  StringMap<std::set<std::string>> edges;
 
 };
 

@@ -71,6 +71,13 @@ shared_ptr<System> Factory::create(const Config::Config &cfg) {
   create<Task>(cfg.tasks, tasks);
   create<Machine>(cfg.machines, machines);
   create<Demand>(cfg.demands, demands);
+  for_each(cfg.prereqs.begin(), cfg.prereqs.end(),
+      [&tasks](const Config::Prereq &prereq) {
+        shared_ptr<Task> receivingTask = tasks.at(prereq.receivingTask);
+        shared_ptr<Task> supplyingTask = tasks.at(prereq.supplyingTask);
+        receivingTask->suppliers.emplace_back(supplyingTask,
+            to_internal_quantity(prereq.quantity));
+      });
   return make_shared<System>(eventQ, logger, tasks, machines, demands);
 }
 

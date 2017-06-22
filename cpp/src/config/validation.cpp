@@ -1,5 +1,6 @@
 #include <iostream>
 #include <numeric>
+#include <deque>
 #include "validation.hpp"
 
 namespace SK3 {
@@ -10,6 +11,7 @@ const std::string Variants::NAME = "Variants";
 const std::string     Task::NAME = "Task";
 const std::string  Machine::NAME = "Machine";
 const std::string   Demand::NAME = "Demand";
+const std::string   Prereq::NAME = "Prereq";
 const std::string   Config::NAME = "Config";
 
 namespace Validate {
@@ -75,19 +77,9 @@ int CEImpl<Machine>::countErrors(const Machine &machine) {
 
 int CEImpl<Demand>::countErrors(const Demand &demand) {
   int errors = 0;
-  if (!demand.destination.empty()) {
-    edges[demand.destination] = demand.name;
-    auto found = edges.find(demand.name);
-    auto   end = edges.end();
-    while (found != end) {
-      const string &src = found->second;
-      if (src == demand.destination) {
-        err(demand, " participates in a loop");
-        ++errors;
-        break;
-      }
-      found = edges.find(src);
-    }
+  if (knownTasks.find(demand.name) == knownTasks.end()) {
+    err(demand, " is for an unknown task");
+    ++errors;
   }
   if (demand.quantity <= 0) {
     err(demand, " has non-positive quantity");
@@ -104,6 +96,64 @@ int CEImpl<Demand>::countErrors(const Demand &demand) {
   return errors;
 }
 
+int CEImpl<Prereq>::countErrors(const Prereq &prereq) {
+  int errors = 0;
+  set<string> &suppliers = edges[prereq.receivingTask];
+  if (!suppliers.insert(prereq.supplyingTask).second) {
+    err(prereq, " is duplicated");
+    ++errors;
+  }
+  set<string> checked;
+  deque<string> toCheck(suppliers.begin(), suppliers.end());
+  while (!toCheck.empty()) {
+    const string name = toCheck.front();
+    if (name == prereq.receivingTask) {
+      err(prereq, " participates in a loop");
+      ++errors;
+      break;
+    }
+    toCheck.pop_front();
+    if (!checked.insert(name).second) continue;
+    StringMap<set<string>>::iterator found = edges.find(name);
+    if (found == edges.end()) continue;
+    toCheck.insert(toCheck.end(),
+        found->second.begin(), found->second.end());
+  }
+  if (knownTasks.find(prereq.supplyingTask) == knownTasks.end()) {
+    err(prereq, " is for an unknown source task");
+    ++errors;
+  }
+  if (knownTasks.find(prereq.receivingTask) == knownTasks.end()) {
+    err(prereq, " has an unknown destination task ", prereq.receivingTask);
+    ++errors;
+  }
+  if (prereq.quantity <= 0) {
+    err(prereq, " has non-positive quantity");
+    ++errors;
+  }
+  return errors;
+}
+
+static inline int countUnusedTasks(
+    const vector<Prereq> &prereqs,
+    const StringMap<Demand> &demands,
+    const StringMap<Task> &tasks) {
+  StringMap<Task> unused = tasks;
+  for_each(prereqs.begin(), prereqs.end(),
+      [&unused](const Prereq &prereq) {
+        unused.erase(prereq.supplyingTask);
+      });
+  for_each(demands.begin(), demands.end(),
+      [&unused](const pair<const string, Demand> &val) {
+        unused.erase(val.first);
+      });
+  for_each(unused.begin(), unused.end(),
+      [](const pair<const string, Task> &val) {
+        err(val.second, " is not used by any task or external demand");
+      });
+  return unused.size();
+}
+
 int countErrors(const Config &cfg) {
   int errors = 0;
   if (cfg.logger.limit < 0) {
@@ -116,7 +166,10 @@ int countErrors(const Config &cfg) {
     accumulate(cfg.machines.begin(), cfg.machines.end(), 0,
       CountErrors<Machine>(cfg.tasks)) +
     accumulate(cfg.demands.begin(), cfg.demands.end(), 0,
-      CountErrors<Demand>(cfg.tasks));
+      CountErrors<Demand>(cfg.tasks)) +
+    accumulate(cfg.prereqs.begin(), cfg.prereqs.end(), 0,
+      CountErrors<Prereq>(cfg.tasks)) +
+    countUnusedTasks(cfg.prereqs, cfg.demands, cfg.tasks);
   //TODO: more validation?
   return errors;
 }

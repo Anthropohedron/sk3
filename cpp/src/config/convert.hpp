@@ -11,6 +11,7 @@ struct Variants;
 struct Task;
 struct Machine;
 struct Demand;
+struct Prereq;
 struct Config;
 
 } // namespace SK3::Config
@@ -41,6 +42,10 @@ template<> struct convert<SK3C::Machine> {
 
 template<> struct convert<SK3C::Demand> {
   static bool decode(const Node &node, SK3C::Demand &rhs);
+};
+
+template<> struct convert<SK3C::Prereq> {
+  static bool decode(const Node &node, SK3C::Prereq &rhs);
 };
 
 template<> struct convert<SK3C::Config> {

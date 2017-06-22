@@ -2,18 +2,27 @@
 #define TASK_HPP
 
 #include <string>
+#include <vector>
 #include "sk3.hpp"
 #include "logger.hpp"
 #include "config/representation.hpp"
 
 namespace SK3 {
 
+class Task;
 class Machine;
 class Demand;
 
 namespace Instantiate {
 class Factory;
 }
+
+struct Supplier {
+  inline Supplier(weak_ptr<Task> _task, Quantity _quantity):
+    task(_task), quantity(_quantity) { }
+  weak_ptr<Task> task;
+  Quantity quantity;
+};
 
 class Task : public LogReporter, SimulationComponent {
 
@@ -46,6 +55,7 @@ class Task : public LogReporter, SimulationComponent {
 
   friend Instantiate::Factory;
   weak_ptr<Machine> machine;
+  std::vector<Supplier> suppliers;
 
   virtual bool should_enqueue();
 
