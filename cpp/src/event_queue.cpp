@@ -6,7 +6,7 @@ namespace SK3 {
 
 using namespace std;
 
-bool FuncEntry::operator<(const FuncEntry &rhs) const {
+bool EventQueue::FuncEntry::operator<(const FuncEntry &rhs) const {
   // this is deliberately reversed
   return time > rhs.time;
 }
@@ -20,9 +20,9 @@ EventQueue::EventQueue(shared_ptr<Logger> _logger
 
 EventQueue::~EventQueue() { }
 
-void EventQueue::add_event(Time delay, Func *func) {
+void EventQueue::add_event(Time delay, const Func &func) {
   assert(delay > 0);
-  queue.push(FuncEntry(delay + curTime, shared_ptr<Func>(func)));
+  queue.push(FuncEntry(delay + curTime, func));
 }
 
 void EventQueue::set_logger(shared_ptr<Logger> _logger) {

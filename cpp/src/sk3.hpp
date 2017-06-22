@@ -1,6 +1,7 @@
 #ifndef SK3_HPP
 #define SK3_HPP
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <map>
@@ -26,6 +27,8 @@ namespace SK3 {
 
 using std::shared_ptr;
 using std::weak_ptr;
+
+typedef std::function<void()> Func;
 
 template<class V>
 using StringMap = std::map<std::string, V>;
