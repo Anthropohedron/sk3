@@ -42,9 +42,24 @@ public SimulationComponent {
   void add_event(Time delay, const Func &func);
   bool runOneBefore(Time endTime);
 
-  inline void log(const Logger::LogType type, const LogReporter &reporter,
-      const Time length, const std::string &details = "") {
-    logger->log(curTime, type, reporter, length, details);
+  struct LogRecord {
+
+    typedef Logger::Record::Type Type;
+
+    inline LogRecord(Type _type, Time _duration,
+        const std::string &_details = ""): type(_type),
+           duration(_duration), details(_details) { }
+
+    Type type;
+    Time duration;
+    std::string details;
+  };
+
+  inline void log(const LogRecord &record, const LogReporter &reporter) {
+    logger->log(
+        Logger::Record(curTime, record.type,
+          record.duration, record.details),
+        reporter);
   }
 
   private:

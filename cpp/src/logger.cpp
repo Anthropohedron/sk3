@@ -32,22 +32,22 @@ shared_ptr<Logger> Logger::create(const Config::Logger &cfg) {
 Logger::Logger() {}
 Logger::~Logger() {}
 
-void Logger::log_line(ostream &out, Time now,
-    const LogType type, const LogReporter &reporter,
-    const Time length, const string &details) {
-  if ((type < LOG_DEFICIT) || (type > LOG_BUFFER_FULL)) {
+void Logger::log_line(ostream &out, const Record &record,
+    const LogReporter &reporter) {
+  if ((record.type < Record::Type::LOG_DEFICIT) ||
+      (record.type > Record::Type::LOG_BUFFER_FULL)) {
     return;
   }
-  time_format(out, now);
+  time_format(out, record.now);
   out << " (";
-  time_format(out, length);
-  out << "): " << LogRecordType[type] << " (" << reporter.name();
-  if (type == LOG_DEFICIT) {
+  time_format(out, record.duration);
+  out << "): " << LogRecordType[record.type] << " (" << reporter.name();
+  if (record.type == Record::Type::LOG_DEFICIT) {
     out << "deficit: ";
     quantity_format(out, reporter.buffer());
   }
-  if (!details.empty()) {
-    out << ' ' << details;
+  if (!record.details.empty()) {
+    out << ' ' << record.details;
   }
   out << endl;
 }
@@ -59,11 +59,10 @@ SimpleLogger::SimpleLogger(Time pause, ostream &_out):
 
 SimpleLogger::~SimpleLogger() { }
 
-void SimpleLogger::log(Time now, const LogType type,
-    const LogReporter &reporter,
-    const Time length, const string &details) {
-  log_line(out, now, type, reporter, length, details);
-  if (now >= next_pause) {
+void SimpleLogger::log(const Record &record,
+    const LogReporter &reporter) {
+  log_line(out, record, reporter);
+  if (record.now >= next_pause) {
     string response = "Y";
     cerr << "Continue (Y/n)? " << flush;
     cin >> response;
@@ -117,11 +116,10 @@ void SplitLogger::increment(const string &key) {
   }
 }
 
-void SplitLogger::log(Time now, const LogType type,
-    const LogReporter &reporter,
-    const Time length, const string &details) {
+void SplitLogger::log(const Record &record,
+    const LogReporter &reporter) {
   const string &key = reporter.name();
-  log_line(out(key), now, type, reporter, length, details);
+  log_line(out(key), record, reporter);
   increment(key);
 }
 

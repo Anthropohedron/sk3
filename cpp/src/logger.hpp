@@ -22,12 +22,24 @@ class Logger {
 
   public:
 
-  enum LogType {
-    LOG_DEFICIT,
-    LOG_ACTIVE_END,
-    LOG_IDLE_END,
-    LOG_RIPPLE_END,
-    LOG_BUFFER_FULL
+  struct Record {
+
+    enum Type {
+      LOG_DEFICIT,
+      LOG_ACTIVE_END,
+      LOG_IDLE_END,
+      LOG_RIPPLE_END,
+      LOG_BUFFER_FULL
+    };
+
+    inline Record(Time _now, Type _type, Time _duration,
+        const std::string &_details = ""): now(_now), type(_type),
+           duration(_duration), details(_details) { }
+
+    Time now;
+    Type type;
+    Time duration;
+    std::string details;
   };
 
   typedef Config::Logger config_type;
@@ -40,14 +52,11 @@ class Logger {
 
   Logger();
 
-  void log_line(std::ostream &out, Time now,
-      const LogType type, const LogReporter &reporter,
-      const Time length, const std::string &details);
+  void log_line(std::ostream &out, const Record &record,
+      const LogReporter &reporter);
 
   friend EventQueue;
-  virtual void log(Time now, const LogType type,
-      const LogReporter &reporter,
-      const Time length, const std::string &details = "") = 0;
+  virtual void log(const Record &record, const LogReporter &reporter) = 0;
 
 };
 
