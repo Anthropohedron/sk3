@@ -3,10 +3,9 @@
 
 #include <queue>
 #include "sk3.hpp"
+#include "logger.hpp"
 
 namespace SK3 {
-
-class Logger;
 
 namespace Instantiate {
 class Factory;
@@ -33,7 +32,7 @@ public SimulationComponent {
 
   };
 
-  EventQueue(shared_ptr<Logger> _logger = NULL);
+  EventQueue(shared_ptr<Logger> _logger);
   ~EventQueue();
 
   inline const Time now() const { return curTime; }
@@ -43,10 +42,12 @@ public SimulationComponent {
   void add_event(Time delay, const Func &func);
   bool runOneBefore(Time endTime);
 
-  private:
+  inline void log(const Logger::LogType type, const LogReporter &reporter,
+      const Time length, const std::string &details = "") {
+    logger->log(curTime, type, reporter, length, details);
+  }
 
-  friend Instantiate::Factory;
-  void set_logger(shared_ptr<Logger> _logger);
+  private:
 
   shared_ptr<Logger> logger;
   Time curTime;

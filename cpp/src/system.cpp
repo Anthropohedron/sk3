@@ -11,13 +11,11 @@ using namespace std;
 
 System::System(
     shared_ptr<EventQueue> _eventQ,
-    shared_ptr<Logger> _logger,
     const StringPtrMap<Task> &_tasks,
     const StringPtrMap<Machine> &_machines,
     const StringPtrMap<Demand> &_demands
     ):
   eventQ(_eventQ),
-  logger(_logger),
   tasks(_tasks),
   machines(_machines),
   demands(_demands) { }

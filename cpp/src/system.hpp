@@ -23,7 +23,6 @@ class System {
 
   System(
     shared_ptr<EventQueue> _eventQ,
-    shared_ptr<Logger> _logger,
     const StringPtrMap<Task> &_tasks,
     const StringPtrMap<Machine> &_machines,
     const StringPtrMap<Demand> &_demands
@@ -37,7 +36,6 @@ class System {
   private:
 
   shared_ptr<EventQueue> eventQ;
-  shared_ptr<Logger> logger;
   StringPtrMap<Task> tasks;
   StringPtrMap<Machine> machines;
   StringPtrMap<Demand> demands;

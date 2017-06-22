@@ -13,7 +13,8 @@ class SimpleLogger : public Logger {
 
   virtual ~SimpleLogger();
 
-  virtual void log(const LogType type, const LogReporter &reporter,
+  virtual void log(Time now, const LogType type,
+      const LogReporter &reporter,
       const Time length, const std::string &details = "");
 
   private:
@@ -48,7 +49,8 @@ class SplitLogger : public Logger {
 
   virtual ~SplitLogger();
 
-  virtual void log(const LogType type, const LogReporter &reporter,
+  virtual void log(Time now, const LogType type,
+      const LogReporter &reporter,
       const Time length, const std::string &details = "");
 
   private:

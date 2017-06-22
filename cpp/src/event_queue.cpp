@@ -11,25 +11,15 @@ bool EventQueue::FuncEntry::operator<(const FuncEntry &rhs) const {
   return time > rhs.time;
 }
 
-EventQueue::EventQueue(shared_ptr<Logger> _logger
-    ): logger(_logger), curTime(0) {
-  if (logger) {
-    logger->eventQ = this;
-  }
-}
+EventQueue::EventQueue(shared_ptr<Logger> _logger):
+  logger(_logger),
+  curTime(0) { }
 
 EventQueue::~EventQueue() { }
 
 void EventQueue::add_event(Time delay, const Func &func) {
   assert(delay > 0);
   queue.push(FuncEntry(delay + curTime, func));
-}
-
-void EventQueue::set_logger(shared_ptr<Logger> _logger) {
-  logger = _logger;
-  if (logger) {
-    logger->eventQ = this;
-  }
 }
 
 bool EventQueue::runOneBefore(Time endTime) {

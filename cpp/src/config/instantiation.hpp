@@ -16,7 +16,7 @@ class Factory {
 
   private:
 
-  Factory(const Config::Variants &variants);
+  Factory(const Config::Config &config);
 
   template<class Instance,
     class ConfigClass = typename Instance::config_type>

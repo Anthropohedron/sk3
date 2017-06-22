@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "logger_impl.hpp"
 #include "config/representation.hpp"
-#include "event_queue.hpp"
 
 namespace SK3 {
 
@@ -33,13 +32,13 @@ shared_ptr<Logger> Logger::create(const Config::Logger &cfg) {
 Logger::Logger() {}
 Logger::~Logger() {}
 
-void Logger::log_line(ostream &out,
+void Logger::log_line(ostream &out, Time now,
     const LogType type, const LogReporter &reporter,
     const Time length, const string &details) {
   if ((type < LOG_DEFICIT) || (type > LOG_BUFFER_FULL)) {
     return;
   }
-  time_format(out, eventQ->now());
+  time_format(out, now);
   out << " (";
   time_format(out, length);
   out << "): " << LogRecordType[type] << " (" << reporter.name();
@@ -60,10 +59,11 @@ SimpleLogger::SimpleLogger(Time pause, ostream &_out):
 
 SimpleLogger::~SimpleLogger() { }
 
-void SimpleLogger::log(const LogType type, const LogReporter &reporter,
+void SimpleLogger::log(Time now, const LogType type,
+    const LogReporter &reporter,
     const Time length, const string &details) {
-  log_line(out, type, reporter, length, details);
-  if (eventQ->now() >= next_pause) {
+  log_line(out, now, type, reporter, length, details);
+  if (now >= next_pause) {
     string response = "Y";
     cerr << "Continue (Y/n)? " << flush;
     cin >> response;
@@ -117,10 +117,11 @@ void SplitLogger::increment(const string &key) {
   }
 }
 
-void SplitLogger::log(const LogType type, const LogReporter &reporter,
+void SplitLogger::log(Time now, const LogType type,
+    const LogReporter &reporter,
     const Time length, const string &details) {
   const string &key = reporter.name();
-  log_line(out(key), type, reporter, length, details);
+  log_line(out(key), now, type, reporter, length, details);
   increment(key);
 }
 

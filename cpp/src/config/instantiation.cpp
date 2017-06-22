@@ -12,11 +12,11 @@ namespace Instantiate {
 
 using namespace std;
 
-Factory::Factory(const Config::Variants &variants):
-  eventQ(new EventQueue()),
-     taskFactory(   Task::factoryFor(variants.task)),
-  machineFactory(Machine::factoryFor(variants.machine)),
-   demandFactory( Demand::factoryFor(variants.demand)) { }
+Factory::Factory(const Config::Config &cfg):
+  eventQ(new EventQueue(Logger::create(cfg.logger))),
+     taskFactory(   Task::factoryFor(cfg.variants.task)),
+  machineFactory(Machine::factoryFor(cfg.variants.machine)),
+   demandFactory( Demand::factoryFor(cfg.variants.demand)) { }
 
 
 template<>
@@ -42,11 +42,6 @@ shared_ptr<Demand> Factory::create(const Config::Demand &cfg) {
   return demandFactory(cfg, eventQ, tasks);
 }
 
-template<>
-shared_ptr<Logger> Factory::create(const Config::Logger &cfg) {
-  return Logger::create(cfg);
-}
-
 template<class Instance, class ConfigClass>
 void Factory::create(const StringMap<ConfigClass> &configs,
     StringPtrMap<Instance> &out) {
@@ -58,8 +53,6 @@ void Factory::create(const StringMap<ConfigClass> &configs,
 
 template<>
 shared_ptr<System> Factory::create(const Config::Config &cfg) {
-  shared_ptr<Logger> logger = create<Logger>(cfg.logger);
-  eventQ->set_logger(logger);
   StringPtrMap<Task> tasks;
   StringPtrMap<Machine> machines;
   StringPtrMap<Demand> demands;
@@ -73,11 +66,11 @@ shared_ptr<System> Factory::create(const Config::Config &cfg) {
         receivingTask->suppliers.emplace_back(supplyingTask,
             to_internal_quantity(prereq.quantity));
       });
-  return make_shared<System>(eventQ, logger, tasks, machines, demands);
+  return make_shared<System>(eventQ, tasks, machines, demands);
 }
 
 shared_ptr<System> Factory::createSystem(const Config::Config &cfg) {
-  Factory factory(cfg.variants);
+  Factory factory(cfg);
   return factory.create<System>(cfg);
 }
 

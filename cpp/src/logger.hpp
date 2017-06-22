@@ -34,21 +34,20 @@ class Logger {
 
   static shared_ptr<Logger> create(const Config::Logger &cfg);
 
-  virtual void log(const LogType type, const LogReporter &reporter,
-      const Time length, const std::string &details = "") = 0;
-
   virtual ~Logger();
 
   protected:
 
   Logger();
 
-  void log_line(std::ostream &out,
+  void log_line(std::ostream &out, Time now,
       const LogType type, const LogReporter &reporter,
       const Time length, const std::string &details);
 
   friend EventQueue;
-  EventQueue *eventQ;
+  virtual void log(Time now, const LogType type,
+      const LogReporter &reporter,
+      const Time length, const std::string &details = "") = 0;
 
 };
 
