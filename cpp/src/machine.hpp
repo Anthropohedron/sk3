@@ -2,9 +2,10 @@
 #define MACHINE_HPP
 
 #include <map>
-#include <queue>
+#include <deque>
 #include "sk3.hpp"
 #include "logger.hpp"
+#include "task.hpp"
 #include "config/representation.hpp"
 
 namespace SK3 {
@@ -19,18 +20,15 @@ public SimulationComponent {
 
   public:
 
+  typedef std::map<shared_ptr<Task>, long, Task::CompareByName> TaskCounts;
   typedef Config::Machine config_type;
 
   static machine_factory_t factoryFor(const std::string &variant);
 
   Machine(shared_ptr<EventQueue> _eventQ, const std::string &_name,
-      const std::map<shared_ptr<Task>, long> &_tasks);
+      const TaskCounts &_tasks);
 
-  // config
-  void add_task(Task *task);
-
-  // operation
-  void enqueue(Task *task);
+  void enqueue(shared_ptr<Task> task);
 
   virtual void init_sim();
 
@@ -41,11 +39,17 @@ public SimulationComponent {
 
   shared_ptr<EventQueue> eventQ;
   const std::string machineName;
+  Func eventFunc;
 
   friend Instantiate::Factory;
-  std::map<shared_ptr<Task>, long> tasks;
-  std::queue<weak_ptr<Task>> runQ;
-  weak_ptr<Task> doing;
+  TaskCounts tasks;
+  std::deque<weak_ptr<Task>> runQ;
+
+  bool idle;
+  Time idleStart;
+
+  void startNextTask();
+  void finishTask();
 
 };
 

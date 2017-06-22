@@ -30,6 +30,17 @@ public SimulationComponent {
 
   public:
 
+  struct CompareByName {
+    inline bool operator()(const Task &lhs,
+        const Task &rhs) const {
+      return lhs.taskName < rhs.taskName;
+    }
+    inline bool operator()(shared_ptr<Task> lhs,
+        shared_ptr<Task> rhs) const {
+      return lhs->taskName < rhs->taskName;
+    }
+  };
+
   typedef Config::Task config_type;
 
   static task_factory_t factoryFor(const std::string &variant);
@@ -46,12 +57,17 @@ public SimulationComponent {
   virtual void take_from_buffer(const Quantity quantity,
       weak_ptr<DemandOrder> order = weak_ptr<DemandOrder>());
 
-  protected:
+  void startBatch();
+  void finishBatch();
+  Quantity resetLowWaterMark();
 
-  shared_ptr<EventQueue> eventQ;
   const std::string taskName;
   const Time batch_time;
+
+  protected:
+
   const Quantity batch_size;
+  shared_ptr<EventQueue> eventQ;
   Quantity taskBuffer;
   Quantity low_water_mark;
 

@@ -28,11 +28,12 @@ task_factory_t Task::factoryFor(const string &variant) {
 Task::Task(shared_ptr<EventQueue> _eventQ, const string &_name,
     const Time _batch_time, const Quantity _batch_size,
     const Quantity init_buffer):
-  eventQ(_eventQ),
   taskName(_name),
   batch_time(_batch_time),
   batch_size(_batch_size),
-  taskBuffer(init_buffer) { }
+  eventQ(_eventQ),
+  taskBuffer(init_buffer),
+  low_water_mark(init_buffer) { }
 
 void Task::init_sim() {
   //TODO
@@ -44,6 +45,20 @@ const Quantity Task::buffer() const { return taskBuffer; }
 void Task::take_from_buffer(const Quantity quantity,
     weak_ptr<DemandOrder> order) {
   //TODO
+}
+
+void Task::startBatch() {
+  //TODO
+}
+
+void Task::finishBatch() {
+  //TODO
+}
+
+Quantity Task::resetLowWaterMark() {
+  Quantity low = low_water_mark;
+  low_water_mark = taskBuffer;
+  return low;
 }
 
 bool Task::should_enqueue() {
