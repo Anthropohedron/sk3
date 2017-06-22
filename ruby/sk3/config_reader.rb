@@ -101,7 +101,8 @@ module SK3
         }.compact
         machine.add_tasks(*args) unless args.empty?
       end
-      cfg["demands"].each do |name,options|
+      cfg["demands"].each do |options|
+        name = options[:supplier] || options["supplier"]
         source = @tasks[name]
         fail "No such task: #{name.inspect}" unless source
         quantity = SK3.get_positive_quantity(options, :quantity)

@@ -31,16 +31,16 @@ machines:
     - t3
 
 demands:
-  t1:
+  - supplier: t1
     quantity: 1
     destination: t2
-  t2:
+  - supplier: t2
     quantity: 1
     interval: 1
-  t3:
+  - supplier: t3
     quantity: 1
     destination: t4
-  t4:
+  - supplier: t4
     quantity: 1
     interval: 1
 
