@@ -8,7 +8,8 @@ namespace SK3 {
 
 class EventQueue;
 
-class Demand : public SimulationComponent {
+class Demand :
+public SimulationComponent {
   
   public:
 

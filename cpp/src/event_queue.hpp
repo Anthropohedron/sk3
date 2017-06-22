@@ -35,7 +35,8 @@ namespace Instantiate {
 class Factory;
 }
 
-class EventQueue : public SimulationComponent {
+class EventQueue :
+public SimulationComponent {
 
   public:
 

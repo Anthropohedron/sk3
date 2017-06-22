@@ -13,7 +13,9 @@ namespace Instantiate {
 class Factory;
 }
 
-class Machine : public LogReporter, SimulationComponent {
+class Machine :
+public LogReporter,
+public SimulationComponent {
 
   public:
 

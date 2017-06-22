@@ -24,7 +24,9 @@ struct Supplier {
   Quantity quantity;
 };
 
-class Task : public LogReporter, SimulationComponent {
+class Task :
+public LogReporter,
+public SimulationComponent {
 
   public:
 
