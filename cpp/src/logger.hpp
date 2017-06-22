@@ -10,7 +10,7 @@ namespace SK3 {
 class EventQueue;
 
 struct LogReporter {
-  virtual const std::string name() const = 0;
+  virtual const std::string &name() const = 0;
   virtual const Quantity buffer() const = 0;
 };
 

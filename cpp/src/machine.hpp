@@ -34,7 +34,7 @@ public SimulationComponent {
 
   virtual void init_sim();
 
-  virtual const std::string name() const;
+  virtual const std::string &name() const;
   virtual const Quantity buffer() const;
 
   private:

@@ -38,7 +38,7 @@ void Machine::init_sim() {
   //TODO
 }
 
-const string Machine::name() const {
+const string &Machine::name() const {
   return machineName;
 }
 const Quantity Machine::buffer() const {

@@ -38,12 +38,8 @@ void Task::init_sim() {
   //TODO
 }
 
-const string Task::name() const {
-  return taskName;
-}
-const Quantity Task::buffer() const {
-  return taskBuffer;
-}
+const string &Task::name() const { return taskName; }
+const Quantity Task::buffer() const { return taskBuffer; }
 
 void Task::take_from_buffer(const Quantity quantity,
     Demand *demand) {
