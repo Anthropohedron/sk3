@@ -4,12 +4,25 @@
 
 namespace SK3 {
 namespace Config {
+
+const std::string   Logger::NAME = "Logger";
+const std::string Variants::NAME = "Variants";
+const std::string     Task::NAME = "Task";
+const std::string  Machine::NAME = "Machine";
+const std::string   Demand::NAME = "Demand";
+const std::string   Config::NAME = "Config";
+
 namespace Validate {
 
 using namespace std;
 
-static inline void err(const Task &task, const string &msg) {
-  cerr << "ERROR: Task " << task.name << msg << endl;
+template <typename C>
+static inline void err(const C &cfg, const string &msg,
+    const string &msg2 = "",
+    const string &msg3 = "",
+    const string &msg4 = "") {
+  cerr << "ERROR: " << C::NAME << " " << cfg.name
+    << msg << msg2 << msg3 << msg4 << endl;
 }
 
 int CEImpl<Task>::countErrors(const Task &task) {
@@ -23,14 +36,6 @@ int CEImpl<Task>::countErrors(const Task &task) {
     ++errors;
   }
   return errors;
-}
-
-static inline void err(const Machine &machine, const string &msg,
-    const string &msg2 = "",
-    const string &msg3 = "",
-    const string &msg4 = "") {
-  cerr << "ERROR: Machine " << machine.name
-    << msg << msg2 << msg3 << msg4 << endl;
 }
 
 int CEImpl<Machine>::countErrors(const Machine &machine) {
@@ -66,10 +71,6 @@ int CEImpl<Machine>::countErrors(const Machine &machine) {
         });
   }
   return errors;
-}
-
-static inline void err(const Demand &demand, const string &msg) {
-  cerr << "ERROR: Demand " << demand.name << msg << endl;
 }
 
 int CEImpl<Demand>::countErrors(const Demand &demand) {

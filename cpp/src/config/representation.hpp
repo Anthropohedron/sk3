@@ -17,18 +17,21 @@ class Demand;
 namespace Config {
 
 struct Logger {
+  static const std::string NAME;
   std::string file;
   std::string dir;
   double limit;
 };
 
 struct Variants {
+  static const std::string NAME;
   std::string task;
   std::string machine;
   std::string demand;
 };
 
 struct Task {
+  static const std::string NAME;
   std::string name;
   double batch_time;
   double batch_size;
@@ -36,11 +39,13 @@ struct Task {
 };
 
 struct Machine {
+  static const std::string NAME;
   std::string name;
   std::vector<std::string> tasks;
 };
 
 struct Demand {
+  static const std::string NAME;
   std::string name;
   std::string destination;
   double quantity;
@@ -49,6 +54,7 @@ struct Demand {
 };
 
 struct Config {
+  static const std::string NAME;
   Logger logger;
   Variants variants;
   StringMap<Task> tasks;
