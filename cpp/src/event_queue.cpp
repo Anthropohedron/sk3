@@ -33,7 +33,9 @@ bool EventQueue::runOneBefore(Time endTime) {
 }
 
 void EventQueue::init_sim() {
-  //TODO
+  priority_queue<FuncEntry> temp;
+  queue.swap(temp);
+  curTime = 0;
 }
 
 }
