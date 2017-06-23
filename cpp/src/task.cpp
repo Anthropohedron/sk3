@@ -15,7 +15,7 @@ template<class T> shared_ptr<Task> factory(const Config::Task &cfg,
   return make_shared<T>(eventQ, cfg.name,
       to_internal_time(cfg.batch_time),
       to_internal_quantity(cfg.batch_size),
-      to_internal_quantity(cfg.deficit));
+      -to_internal_quantity(cfg.deficit));
 }
 
 static map<string, task_factory_t> factories {

@@ -37,6 +37,10 @@ int CEImpl<Task>::countErrors(const Task &task) {
     err(task, " has negative batch_time");
     ++errors;
   }
+  if (task.deficit < 0) {
+    err(task, " has negative deficit (i.e. a surplus)");
+    ++errors;
+  }
   return errors;
 }
 
