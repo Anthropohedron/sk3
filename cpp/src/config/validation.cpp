@@ -134,6 +134,25 @@ int CEImpl<Prereq>::countErrors(const Prereq &prereq) {
   return errors;
 }
 
+static inline int countUnassignedTasks(
+    const StringMap<Machine> &machines,
+    const StringMap<Task> &tasks) {
+  StringMap<Task> unassigned = tasks;
+  for_each(machines.begin(), machines.end(),
+      [&unassigned](const pair<const string, Machine> &val) {
+        const Machine &machine = val.second;
+        for_each(machine.tasks.begin(), machine.tasks.end(),
+            [&unassigned](const string &task) {
+              unassigned.erase(task);
+            });
+      });
+  for_each(unassigned.begin(), unassigned.end(),
+      [](const pair<const string, Task> &val) {
+        err(val.second, " is not assigned to any machine");
+      });
+  return unassigned.size();
+}
+
 static inline int countUnusedTasks(
     const vector<Prereq> &prereqs,
     const StringMap<Demand> &demands,
@@ -169,6 +188,7 @@ int countErrors(const Config &cfg) {
       CountErrors<Demand>(cfg.tasks)) +
     accumulate(cfg.prereqs.begin(), cfg.prereqs.end(), 0,
       CountErrors<Prereq>(cfg.tasks)) +
+    countUnassignedTasks(cfg.machines, cfg.tasks) +
     countUnusedTasks(cfg.prereqs, cfg.demands, cfg.tasks);
   //TODO: more validation?
   return errors;
