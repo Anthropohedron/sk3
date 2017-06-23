@@ -1,4 +1,8 @@
+#include <algorithm>
 #include "task.hpp"
+#include "machine.hpp"
+#include "demand.hpp"
+#include "event_queue.hpp"
 
 namespace SK3 {
 
@@ -36,23 +40,67 @@ Task::Task(shared_ptr<EventQueue> _eventQ, const string &_name,
   low_water_mark(init_buffer) { }
 
 void Task::init_sim() {
-  //TODO
+  if (taskBuffer < 0) {
+    startTime = eventQ->now();
+    machine.lock()->enqueue(shared_from_this());
+  }
+  resetLowWaterMark();
 }
 
 const string &Task::name() const { return taskName; }
 const Quantity Task::buffer() const { return taskBuffer; }
 
 void Task::take_from_buffer(const Quantity quantity,
-    weak_ptr<DemandOrder> order) {
-  //TODO
+    shared_ptr<DemandOrder> order) {
+  if ((taskBuffer >= 0) && (taskBuffer < quantity)) {
+    startTime = eventQ->now();
+  }
+  taskBuffer -= quantity;
+  if (taskBuffer < low_water_mark) {
+    low_water_mark = taskBuffer;
+  }
+  if (should_enqueue()) {
+    machine.lock()->enqueue(shared_from_this());
+  }
+  if (taskBuffer >= 0) return;
+  //FIXME: max seems wrong; I think it should be min?
+  order->taking(shared_from_this(), max(quantity, -taskBuffer));
+  if (find(orders.begin(), orders.end(), order) == orders.end()) {
+    orders.push_back(order);
+  }
 }
 
 void Task::startBatch() {
-  //TODO
+  shared_ptr<DemandOrder> serving = orders.front();
+  for_each(suppliers.begin(), suppliers.end(),
+      [serving](Supplier &supplier) {
+        shared_ptr<Task> task = supplier.task.lock();
+        task->take_from_buffer(supplier.quantity, serving);
+      });
 }
 
+typedef EventQueue::LogRecord LogRecord;
+typedef LogRecord::Type LogType;
+
 void Task::finishBatch() {
-  //TODO
+  Quantity produced = batch_size;
+  taskBuffer += produced;
+  while ((produced > 0) && !orders.empty()) {
+    pair<bool, Quantity> fulfilled =
+      orders.front()->fulfilling(shared_from_this(), produced);
+    if (fulfilled.first) {
+      orders.pop_front();
+    }
+    produced = fulfilled.second;
+  }
+  if (taskBuffer < 0) {
+    machine.lock()->enqueue(shared_from_this());
+  } else {
+    Time duration = eventQ->now() - startTime;
+    eventQ->log(
+        LogRecord(LogType::LOG_BUFFER_FULL, duration),
+        *this);
+  }
 }
 
 Quantity Task::resetLowWaterMark() {
@@ -62,7 +110,7 @@ Quantity Task::resetLowWaterMark() {
 }
 
 bool Task::should_enqueue() {
-  //TODO
+  return taskBuffer < 0;
   return false;
 }
 

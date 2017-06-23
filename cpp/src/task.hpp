@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 #include "sk3.hpp"
 #include "logger.hpp"
 #include "config/representation.hpp"
@@ -25,6 +26,7 @@ struct Supplier {
 };
 
 class Task :
+public std::enable_shared_from_this<Task>,
 public LogReporter,
 public SimulationComponent {
 
@@ -55,7 +57,7 @@ public SimulationComponent {
   virtual const Quantity buffer() const;
 
   virtual void take_from_buffer(const Quantity quantity,
-      weak_ptr<DemandOrder> order = weak_ptr<DemandOrder>());
+      shared_ptr<DemandOrder> order);
 
   void startBatch();
   void finishBatch();
@@ -74,6 +76,8 @@ public SimulationComponent {
   friend Instantiate::Factory;
   weak_ptr<Machine> machine;
   std::vector<Supplier> suppliers;
+  std::deque<shared_ptr<DemandOrder>> orders;
+  Time startTime;
 
   virtual bool should_enqueue();
 
