@@ -56,6 +56,7 @@ public SimulationComponent {
   virtual const std::string &name() const;
   virtual const Quantity buffer() const;
 
+  virtual void take_from_buffer(const Quantity quantity);
   virtual void take_from_buffer(const Quantity quantity,
       shared_ptr<DemandOrder> order);
 

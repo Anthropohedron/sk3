@@ -50,8 +50,7 @@ void Task::init_sim() {
 const string &Task::name() const { return taskName; }
 const Quantity Task::buffer() const { return taskBuffer; }
 
-void Task::take_from_buffer(const Quantity quantity,
-    shared_ptr<DemandOrder> order) {
+void Task::take_from_buffer(const Quantity quantity) {
   if ((taskBuffer >= 0) && (taskBuffer < quantity)) {
     startTime = eventQ->now();
   }
@@ -62,6 +61,11 @@ void Task::take_from_buffer(const Quantity quantity,
   if (should_enqueue()) {
     machine.lock()->enqueue(shared_from_this());
   }
+}
+
+void Task::take_from_buffer(const Quantity quantity,
+    shared_ptr<DemandOrder> order) {
+  take_from_buffer(quantity);
   if (taskBuffer >= 0) return;
   //FIXME: max seems wrong; I think it should be min?
   order->taking(shared_from_this(), max(quantity, -taskBuffer));
@@ -71,12 +75,20 @@ void Task::take_from_buffer(const Quantity quantity,
 }
 
 void Task::startBatch() {
-  shared_ptr<DemandOrder> serving = orders.front();
-  for_each(suppliers.begin(), suppliers.end(),
-      [serving](Supplier &supplier) {
-        shared_ptr<Task> task = supplier.task.lock();
-        task->take_from_buffer(supplier.quantity, serving);
-      });
+  if (orders.empty()) {
+    for_each(suppliers.begin(), suppliers.end(),
+        [](Supplier &supplier) {
+          shared_ptr<Task> task = supplier.task.lock();
+          task->take_from_buffer(supplier.quantity);
+        });
+  } else {
+    shared_ptr<DemandOrder> serving = orders.front();
+    for_each(suppliers.begin(), suppliers.end(),
+        [serving](Supplier &supplier) {
+          shared_ptr<Task> task = supplier.task.lock();
+          task->take_from_buffer(supplier.quantity, serving);
+        });
+  }
 }
 
 typedef EventQueue::LogRecord LogRecord;
