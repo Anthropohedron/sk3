@@ -81,6 +81,11 @@ public SimulationComponent {
 
   virtual bool should_enqueue();
 
+  private:
+
+  Task();
+  Task(const Task &);
+
 };
 
 }

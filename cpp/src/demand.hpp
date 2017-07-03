@@ -45,6 +45,9 @@ public SimulationComponent {
 
   void onInterval();
 
+  Demand();
+  Demand(const Demand &);
+
 };
 
 class DemandOrder : public LogReporter {
@@ -69,6 +72,10 @@ class DemandOrder : public LogReporter {
   const std::string demandName;
   const std::string serial;
   std::map<weak_ptr<Task>, Quantity> products;
+
+  DemandOrder();
+  DemandOrder(const DemandOrder &);
+
 };
 
 

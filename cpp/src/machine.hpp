@@ -37,6 +37,9 @@ public SimulationComponent {
 
   private:
 
+  Machine();
+  Machine(const Machine &);
+
   shared_ptr<EventQueue> eventQ;
   const std::string machineName;
   Func eventFunc;

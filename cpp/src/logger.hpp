@@ -58,6 +58,10 @@ class Logger {
   friend EventQueue;
   virtual void log(const Record &record, const LogReporter &reporter) = 0;
 
+  private:
+
+  Logger(const Logger &);
+
 };
 
 }

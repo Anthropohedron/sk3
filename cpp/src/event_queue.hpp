@@ -68,6 +68,9 @@ public SimulationComponent {
   Time curTime;
   std::priority_queue<FuncEntry> queue;
 
+  EventQueue();
+  EventQueue(const EventQueue &);
+
 };
 
 }
