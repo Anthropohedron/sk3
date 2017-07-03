@@ -1,11 +1,13 @@
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <iomanip>
 #include "sk3.hpp"
-
-namespace SK3 {
+#include "system.hpp"
 
 using namespace std;
+
+namespace SK3 {
 
 static const int TimeDecimals = 3;
 static const int QuantityDecimals = 3;
@@ -37,8 +39,10 @@ Quantity internal_quantity_mul(Quantity q1, Quantity q2) {
 
 } // namespace SK3
 
+using namespace SK3;
+
 static inline void usage(char *prog) {
-  std::cerr << "Usage: " << prog << " <time limit> <config>" << std::endl;
+  cerr << "Usage: " << prog << " <time limit> <config>" << endl;
 }
 
 extern "C" int
@@ -47,7 +51,14 @@ main(int argc, char **argv) {
     usage(*argv);
     return 1;
   }
-  SK3::Config::read(argv[2]);
+  double raw_limit = strtod(argv[1], NULL);
+  if (raw_limit <= 0.0) {
+    usage(*argv);
+    return 2;
+  }
+  Time limit = to_internal_time(raw_limit);
+  shared_ptr<System> simulator = Config::read(argv[2]);
+  simulator->runUntil(limit);
   return 0;
 }
 
