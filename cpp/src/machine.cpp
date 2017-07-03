@@ -35,7 +35,7 @@ Machine::Machine(shared_ptr<EventQueue> _eventQ, const string &_name,
     const TaskCounts &_tasks):
   eventQ(_eventQ),
   machineName(_name),
-  eventFunc(std::bind(&Machine::finishTask, *this)),
+  eventFunc(bind(&Machine::finishTask, ref(*this))),
   tasks(_tasks) { }
 
 void Machine::startNextTask() {

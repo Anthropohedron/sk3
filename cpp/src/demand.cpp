@@ -36,7 +36,7 @@ Demand::Demand(shared_ptr<EventQueue> _eventQ, weak_ptr<Task> _task,
   interval(_interval),
   offset(_offset),
   counter(0),
-  intervalFunc(bind(&Demand::onInterval, *this)) { }
+  intervalFunc(bind(&Demand::onInterval, ref(*this))) { }
 
 void Demand::init_sim() {
   eventQ->add_event(interval + offset, intervalFunc);
