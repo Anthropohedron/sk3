@@ -29,5 +29,16 @@ if(CTAGS_PATH)
         add_dependencies(simulate tags)
 endif(CTAGS_PATH)
 
+find_program(DOXYGEN_PATH doxygen)
+if(DOXYGEN_PATH)
+        message(STATUS "Found doxygen: ${DOXYGEN_PATH}")
+        # Add a top-level "docs" target to run doxygen
+        set_source_files_properties(docs PROPERTIES GENERATED true)
+        add_custom_target(docs
+                DEPENDS ${SIM_SOURCES}
+                COMMAND doxygen Doxyfile
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif(DOXYGEN_PATH)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
