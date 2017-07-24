@@ -52,7 +52,7 @@ class SplitLogger : public Logger {
   private:
 
   std::ostream &out(const std::string &key);
-  void increment(const std::string &key);
+  bool increment(const std::string &key);
 
   StringPtrMap<std::ostream> streams;
   StringMap<long> counts;

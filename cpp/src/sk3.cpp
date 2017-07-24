@@ -9,6 +9,9 @@ using namespace std;
 
 namespace SK3 {
 
+halt_simulation::~halt_simulation() { }
+const char *halt_simulation::what() const noexcept { return msg.c_str(); }
+
 static const int TimeDecimals = 3;
 static const int QuantityDecimals = 3;
 

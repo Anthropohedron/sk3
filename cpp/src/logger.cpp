@@ -73,8 +73,7 @@ void SimpleLogger::log(const Record &record,
       case 'Q':
       case 'x':
       case 'X':
-        //TODO: throw
-        ;
+        throw halt_simulation(record.now, "logging complete");
     }
     next_pause += pause_interval;
   }
@@ -106,21 +105,21 @@ ostream &SplitLogger::out(const string &key) {
 }
 
 // true means stop
-void SplitLogger::increment(const string &key) {
-  if (!limit) return;
+bool SplitLogger::increment(const string &key) {
+  if (!limit) return false;
   auto found = counts.find(key);
   long newVal = (found == counts.end()) ? limit : found->second;
   counts[key] = --newVal;
-  if (newVal < 1) {
-    //TODO: throw
-  }
+  return (newVal < 1);
 }
 
 void SplitLogger::log(const Record &record,
     const LogReporter &reporter) {
   const string &key = reporter.name();
   log_line(out(key), record, reporter);
-  increment(key);
+  if (increment(key)) {
+    throw halt_simulation(record.now, "logging complete");
+  }
 }
 
 }

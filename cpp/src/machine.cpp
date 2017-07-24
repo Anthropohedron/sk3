@@ -84,7 +84,11 @@ void Machine::finishTask() {
 void Machine::enqueue(shared_ptr<Task> task) {
   if (tasks.find(task) == tasks.end()) {
     // can't queue a task not assigned to this machine
-    //TODO: throw
+    ostringstream errMsg;
+    errMsg << "task '" << task->name()
+      << "' is not assigned to machine '" << machineName
+      << "'";
+    throw halt_simulation(eventQ->now(), errMsg.str());
   }
   if (find(runQ.begin(), runQ.end(), weak_ptr<Task>(task)) != runQ.end()) {
     // already queued

@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <ostream>
+#include <exception>
 
 namespace std {
 
@@ -41,6 +42,26 @@ class System;
 
 typedef long Time;
 typedef long Quantity;
+
+struct halt_simulation : public std::exception {
+
+  inline halt_simulation(Time _end, const std::string &_msg):
+    end(_end), msg(_msg) { }
+  inline halt_simulation(const halt_simulation &other):
+    end(other.end), msg(other.msg) { }
+
+  inline halt_simulation &operator=(const halt_simulation &other) {
+    end = other.end;
+    msg = other.msg;
+    return *this;
+  }
+
+  virtual ~halt_simulation();
+  virtual const char *what() const noexcept;
+
+  Time end;
+  std::string msg;
+};
 
 namespace Config {
 

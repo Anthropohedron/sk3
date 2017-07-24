@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include "system.hpp"
 #include "event_queue.hpp"
@@ -26,7 +27,16 @@ void System::runUntil(Time endTime) {
 }
 
 void System::continueUntil(Time endTime) {
-  while (eventQ->runOneBefore(endTime));
+  try {
+    while (eventQ->runOneBefore(endTime));
+    cerr << "Simulation completed normally at ";
+    time_format(cerr, eventQ->now());
+    cerr << endl;
+  } catch (const halt_simulation halt) {
+    cerr << "Halting simulation at ";
+    time_format(cerr, halt.end);
+    cerr << ": " << halt.msg << endl;
+  }
 }
 
 namespace {
