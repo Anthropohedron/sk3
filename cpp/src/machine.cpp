@@ -70,8 +70,8 @@ void Machine::finishTask() {
           } else {
             stats << " ";
           }
-          stats << task->name() << ':' << count << ',';
-          quantity_format(stats, task->resetLowWaterMark());
+          stats << task->name() << ':' << count
+            << ',' << FormatQuantity(task->resetLowWaterMark());
           val.second = 0;
           return sum + count * task->batch_time;
         });

@@ -38,13 +38,11 @@ void Logger::log_line(ostream &out, const Record &record,
       (record.type > Record::Type::LOG_BUFFER_FULL)) {
     return;
   }
-  time_format(out, record.now);
-  out << " (";
-  time_format(out, record.duration);
-  out << "): " << LogRecordType[record.type] << " (" << reporter.name();
+  out << FormatTime(record.now)
+    << " (" << FormatTime(record.duration) << "): "
+    << LogRecordType[record.type] << " (" << reporter.name();
   if (record.type == Record::Type::LOG_DEFICIT) {
-    out << "deficit: ";
-    quantity_format(out, reporter.buffer());
+    out << "deficit: " << FormatQuantity(reporter.buffer());
   }
   if (!record.details.empty()) {
     out << ' ' << record.details;

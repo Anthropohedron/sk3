@@ -18,14 +18,21 @@ static const int QuantityDecimals = 3;
 static const long TimeFactor = 1000L;
 static const long QuantityFactor = 1000L;
 
-void time_format(ostream &out, Time time) {
-  out << (time / TimeFactor) << '.'
-    << setfill('0') << setw(TimeDecimals) << (time % TimeFactor);
+static inline void format(ostream &os,
+    long value, long factor, int width) {
+  const long whole   = value / factor;
+  const long decimal = value % factor;
+  os << whole << '.' << setfill('0') << setw(width) << decimal;
 }
 
-void quantity_format(ostream &out, Quantity quantity) {
-  out << (quantity / QuantityFactor) << '.'
-    << setfill('0') << setw(QuantityDecimals) << (quantity % QuantityFactor);
+ostream &operator<<(ostream &os, const FormatTime &time) {
+  format(os, time.value, TimeFactor, TimeDecimals);
+  return os;
+}
+
+ostream &operator<<(ostream &os, const FormatQuantity &quantity) {
+  format(os, quantity.value, QuantityFactor, QuantityDecimals);
+  return os;
 }
 
 Time to_internal_time(double time) {

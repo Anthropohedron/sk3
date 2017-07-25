@@ -51,8 +51,7 @@ EventQueue::~EventQueue() {
 }
 
 void EventQueue::print_info() {
-  time_format(cerr, curTime);
-  cerr << "\tQueue size: " << queue.size() << endl;
+  cerr << FormatTime(curTime) << "\tQueue size: " << queue.size() << endl;
 }
 
 void EventQueue::add_event(Time delay, const Func &func) {

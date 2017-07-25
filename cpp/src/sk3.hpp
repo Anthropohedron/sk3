@@ -43,6 +43,19 @@ class System;
 typedef long Time;
 typedef long Quantity;
 
+struct FormatTime {
+  inline FormatTime(Time time) : value(time) {}
+  const Time value;
+};
+
+struct FormatQuantity {
+  inline FormatQuantity(Quantity quantity) : value(quantity) {}
+  const Quantity value;
+};
+
+std::ostream &operator<<(std::ostream &os, const FormatTime &time);
+std::ostream &operator<<(std::ostream &os, const FormatQuantity &quantity);
+
 struct halt_simulation : public std::exception {
 
   inline halt_simulation(Time _end, const std::string &_msg):
@@ -72,9 +85,6 @@ shared_ptr<System> read(const std::string &filename);
 struct SimulationComponent {
   virtual void init_sim() = 0;
 };
-
-void time_format(std::ostream &out, Time time);
-void quantity_format(std::ostream &out, Quantity quantity);
 
 Time to_internal_time(double time);
 Quantity to_internal_quantity(double quantity);
