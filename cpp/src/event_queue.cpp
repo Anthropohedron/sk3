@@ -1,6 +1,25 @@
 #include <cassert>
+#include <iostream>
 #include "event_queue.hpp"
 #include "logger.hpp"
+
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+#define STATUS_ON_SIGNAL
+#include <signal.h>
+
+namespace {
+
+static SK3::EventQueue *g_EventQueue = nullptr;
+
+static void print_status(int signum) {
+  if (g_EventQueue) {
+    g_EventQueue->print_info();
+  }
+}
+
+} //anonymous namespace
+
+#endif //STATUS_ON_SIGNAL
 
 namespace SK3 {
 
@@ -13,9 +32,28 @@ bool EventQueue::FuncEntry::operator<(const FuncEntry &rhs) const {
 
 EventQueue::EventQueue(shared_ptr<Logger> _logger):
   logger(_logger),
-  curTime(0) { }
+  curTime(0) {
+#ifdef STATUS_ON_SIGNAL
+    if (!g_EventQueue) {
+      g_EventQueue = this;
+      signal(SIGUSR1, print_status);
+    }
+#endif //STATUS_ON_SIGNAL
+  }
 
-EventQueue::~EventQueue() { }
+EventQueue::~EventQueue() {
+#ifdef STATUS_ON_SIGNAL
+  if (g_EventQueue == this) {
+    g_EventQueue = nullptr;
+    signal(SIGUSR1, SIG_DFL);
+  }
+#endif //STATUS_ON_SIGNAL
+}
+
+void EventQueue::print_info() {
+  time_format(cerr, curTime);
+  cerr << "\tQueue size: " << queue.size() << endl;
+}
 
 void EventQueue::add_event(Time delay, const Func &func) {
   assert(delay > 0);

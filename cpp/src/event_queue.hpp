@@ -41,6 +41,7 @@ public SimulationComponent {
 
   void add_event(Time delay, const Func &func);
   bool runOneBefore(Time endTime);
+  void print_info();
 
   struct LogRecord {
 
