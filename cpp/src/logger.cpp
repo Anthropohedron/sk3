@@ -40,9 +40,10 @@ void Logger::log_line(ostream &out, const Record &record,
   }
   out << FormatTime(record.now)
     << " (" << FormatTime(record.duration) << "): "
-    << LogRecordType[record.type] << " (" << reporter.name();
+    << LogRecordType[record.type] << " (" << reporter.name()
+    << ')';
   if (record.type == Record::Type::LOG_DEFICIT) {
-    out << "deficit: " << FormatQuantity(reporter.buffer());
+    out << "Deficit: " << FormatQuantity(reporter.buffer());
   }
   if (!record.details.empty()) {
     out << ' ' << record.details;

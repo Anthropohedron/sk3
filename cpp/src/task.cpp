@@ -29,6 +29,9 @@ task_factory_t Task::factoryFor(const string &variant) {
   return factories.at(variant);
 }
 
+typedef EventQueue::LogRecord LogRecord;
+typedef LogRecord::Type LogType;
+
 Task::Task(shared_ptr<EventQueue> _eventQ, const string &_name,
     const Time _batch_time, const Quantity _batch_size,
     const Quantity init_buffer):
@@ -40,6 +43,9 @@ Task::Task(shared_ptr<EventQueue> _eventQ, const string &_name,
   low_water_mark(init_buffer) { }
 
 void Task::init_sim() {
+  eventQ->log(
+      LogRecord(LogType::LOG_DEFICIT, 0),
+      *this);
   if (taskBuffer < 0) {
     startTime = eventQ->now();
     machine.lock()->enqueue(shared_from_this());
@@ -55,6 +61,9 @@ void Task::take_from_buffer(const Quantity quantity) {
     startTime = eventQ->now();
   }
   taskBuffer -= quantity;
+  eventQ->log(
+      LogRecord(LogType::LOG_DEFICIT, 0),
+      *this);
   if (taskBuffer < low_water_mark) {
     low_water_mark = taskBuffer;
   }
@@ -91,12 +100,12 @@ void Task::startBatch() {
   }
 }
 
-typedef EventQueue::LogRecord LogRecord;
-typedef LogRecord::Type LogType;
-
 void Task::finishBatch() {
   Quantity produced = batch_size;
   taskBuffer += produced;
+  eventQ->log(
+      LogRecord(LogType::LOG_DEFICIT, 0),
+      *this);
   while ((produced > 0) && !orders.empty()) {
     pair<bool, Quantity> fulfilled =
       orders.front()->fulfilling(shared_from_this(), produced);
