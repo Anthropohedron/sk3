@@ -132,7 +132,6 @@ Quantity Task::resetLowWaterMark() {
 
 bool Task::should_enqueue() {
   return taskBuffer < 0;
-  return false;
 }
 
 }
