@@ -12,6 +12,11 @@ file(GLOB_RECURSE SIM_SOURCES src/*.cpp)
 
 add_executable (simulate ${SIM_SOURCES})
 
+set_source_files_properties(cmake PROPERTIES GENERATED true)
+add_custom_target(cmake
+        COMMAND rm -rf CMakeFiles CMakeCache.txt Makefile cmake_install.cmake \; cmake .
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 # Add a top-level "tags" target which includes all files in both
 # the build and source versions of src/*.
 set_source_files_properties(tags PROPERTIES GENERATED true)
