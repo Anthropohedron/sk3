@@ -71,9 +71,9 @@ void Machine::finishTask() {
             stats << " ";
           }
           stats << task->name() << ':' << count
-            << ',' << FormatQuantity(task->resetLowWaterMark());
+            << ',' << task->resetLowWaterMark();
           val.second = 0;
-          return sum + count * task->batch_time;
+          return sum + task->batch_time * count;
         });
     eventQ->log(
       LogRecord(LogType::LOG_ACTIVE_END, duration, stats.str()),

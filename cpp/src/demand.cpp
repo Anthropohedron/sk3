@@ -13,9 +13,9 @@ template<class D> shared_ptr<Demand> factory(const Config::Demand &cfg,
     shared_ptr<EventQueue> eventQ, TaskMap &tasks) {
   shared_ptr<Task> task = tasks.at(cfg.name);
   return make_shared<D>(eventQ, task,
-      to_internal_quantity(cfg.quantity),
-      to_internal_time(cfg.interval),
-      to_internal_time(cfg.offset));
+      Quantity(cfg.quantity),
+      Time(cfg.interval),
+      Time(cfg.offset));
 }
 
 static map<string, demand_factory_t> factories {

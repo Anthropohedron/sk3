@@ -19,9 +19,9 @@ shared_ptr<Logger> Logger::create(const Config::Logger &cfg) {
   double limit = (cfg.limit <= 0) ? 1000000 : cfg.limit;
   if (cfg.dir.empty()) {
     if (cfg.file.empty()) {
-      return make_shared<SimpleLogger>(to_internal_time(limit));
+      return make_shared<SimpleLogger>(Time(limit));
     } else {
-      return make_shared<SimpleFileLogger>(to_internal_time(limit),
+      return make_shared<SimpleFileLogger>(Time(limit),
           cfg.file);
     }
   } else {
@@ -38,12 +38,12 @@ void Logger::log_line(ostream &out, const Record &record,
       (record.type > Record::Type::LOG_BUFFER_FULL)) {
     return;
   }
-  out << FormatTime(record.now)
-    << " (" << FormatTime(record.duration) << "): "
+  out << record.now
+    << " (" << record.duration << "): "
     << LogRecordType[record.type] << " (" << reporter.name()
     << ')';
   if (record.type == Record::Type::LOG_DEFICIT) {
-    out << "Deficit: " << FormatQuantity(reporter.buffer());
+    out << "Deficit: " << reporter.buffer();
   }
   if (!record.details.empty()) {
     out << ' ' << record.details;

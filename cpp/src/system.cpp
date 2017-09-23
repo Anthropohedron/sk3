@@ -30,10 +30,10 @@ void System::continueUntil(Time endTime) {
   try {
     while (eventQ->runOneBefore(endTime));
     cerr << "Simulation completed normally at "
-      << FormatTime(eventQ->now()) << endl;
+      << eventQ->now() << endl;
   } catch (const halt_simulation halt) {
     cerr << "Halting simulation at "
-      << FormatTime(halt.end) << ": "
+      << halt.end << ": "
       << halt.msg << endl;
   }
 }

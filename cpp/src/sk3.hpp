@@ -5,8 +5,8 @@
 #include <memory>
 #include <string>
 #include <map>
-#include <ostream>
 #include <exception>
+#include "fixedpoint.hpp"
 
 namespace std {
 
@@ -40,21 +40,8 @@ using StringPtrPair = typename StringPtrMap<V>::value_type;
 
 class System;
 
-typedef long Time;
-typedef long Quantity;
-
-struct FormatTime {
-  inline FormatTime(Time time) : value(time) {}
-  const Time value;
-};
-
-struct FormatQuantity {
-  inline FormatQuantity(Quantity quantity) : value(quantity) {}
-  const Quantity value;
-};
-
-std::ostream &operator<<(std::ostream &os, const FormatTime &time);
-std::ostream &operator<<(std::ostream &os, const FormatQuantity &quantity);
+typedef FixedPoint<3> Time;
+typedef FixedPoint<3> Quantity;
 
 struct halt_simulation : public std::exception {
 
@@ -85,11 +72,6 @@ shared_ptr<System> read(const std::string &filename);
 struct SimulationComponent {
   virtual void init_sim() = 0;
 };
-
-Time to_internal_time(double time);
-Quantity to_internal_quantity(double quantity);
-
-Quantity internal_quantity_mul(Quantity q1, Quantity q2);
 
 } // namespace SK3
 
