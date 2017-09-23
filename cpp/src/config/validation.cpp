@@ -1,6 +1,7 @@
 #include <iostream>
 #include <numeric>
 #include <deque>
+#include <algorithm>
 #include "validation.hpp"
 
 namespace SK3 {
