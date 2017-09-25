@@ -1,3 +1,15 @@
+if (DEFINED ENV{CMAKE_BUILD_TYPE})
+	set(CMAKE_BUILD_TYPE $ENV{CMAKE_BUILD_TYPE})
+elseif(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	message(STATUS "Setting build type to 'Release' as none was specified.")
+	set(CMAKE_BUILD_TYPE "Release" CACHE
+		STRING "Choose the type of build." FORCE)
+	# Set the possible values of build type for cmake-gui
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+		"Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
 project (SK3)
 
 cmake_minimum_required (VERSION 3.0)
@@ -46,4 +58,5 @@ if(DOXYGEN_PATH)
 endif(DOXYGEN_PATH)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
