@@ -9,7 +9,7 @@ class SimpleLogger : public Logger {
 
   public:
 
-  SimpleLogger(Time pause = 1000000, std::ostream &_out = std::cout);
+  SimpleLogger(Time pause = Time(1000000.0), std::ostream &_out = std::cout);
 
   virtual ~SimpleLogger();
 

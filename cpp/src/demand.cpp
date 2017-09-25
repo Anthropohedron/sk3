@@ -67,7 +67,7 @@ typedef LogRecord::Type LogType;
 
 pair<bool, Quantity> Demand::Order::fulfilling(weak_ptr<Task> task,
     Quantity quantity) {
-  long value = products[task] + quantity;
+  Quantity value = products[task] + quantity;
   bool fulfilled = (value >= 0);
   if (fulfilled) {
     products.erase(task);
@@ -79,13 +79,13 @@ pair<bool, Quantity> Demand::Order::fulfilling(weak_ptr<Task> task,
     }
   } else {
     products[task] = value;
-    value = 0;
+    value = Quantity();
   }
   return make_pair(fulfilled, value);
 }
 
 const string &Demand::Order::name() const { return demandName; }
-const Quantity Demand::Order::buffer() const { return 0; }
+const Quantity Demand::Order::buffer() const { return Quantity(); }
 
 } // namespace SK3
 

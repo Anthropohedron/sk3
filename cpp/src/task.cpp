@@ -44,7 +44,7 @@ Task::Task(shared_ptr<EventQueue> _eventQ, const string &_name,
 
 void Task::init_sim() {
   eventQ->log(
-      LogRecord(LogType::LOG_DEFICIT, 0),
+      LogRecord(LogType::LOG_DEFICIT),
       *this);
   if (taskBuffer < 0) {
     startTime = eventQ->now();
@@ -62,7 +62,7 @@ void Task::take_from_buffer(const Quantity quantity) {
   }
   taskBuffer -= quantity;
   eventQ->log(
-      LogRecord(LogType::LOG_DEFICIT, 0),
+      LogRecord(LogType::LOG_DEFICIT),
       *this);
   if (taskBuffer < low_water_mark) {
     low_water_mark = taskBuffer;
@@ -104,7 +104,7 @@ void Task::finishBatch() {
   Quantity produced = batch_size;
   taskBuffer += produced;
   eventQ->log(
-      LogRecord(LogType::LOG_DEFICIT, 0),
+      LogRecord(LogType::LOG_DEFICIT),
       *this);
   while ((produced > 0) && !orders.empty()) {
     pair<bool, Quantity> fulfilled =

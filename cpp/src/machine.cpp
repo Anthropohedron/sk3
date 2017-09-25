@@ -61,7 +61,7 @@ void Machine::finishTask() {
     idleStart = eventQ->now();
     ostringstream stats;
     bool first = true;
-    Time duration = accumulate(tasks.begin(), tasks.end(), 0,
+    Time duration = accumulate(tasks.begin(), tasks.end(), Time(),
         [&stats,&first](Time sum, pair<const shared_ptr<Task>, long> &val) {
           const long count = val.second;
           shared_ptr<Task> task = val.first;
@@ -113,7 +113,7 @@ void Machine::init_sim() {
 }
 
 const string &Machine::name() const { return machineName; }
-const Quantity Machine::buffer() const { return 0; }
+const Quantity Machine::buffer() const { return Quantity(); }
 
 }
 

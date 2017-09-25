@@ -32,7 +32,7 @@ bool EventQueue::FuncEntry::operator<(const FuncEntry &rhs) const {
 
 EventQueue::EventQueue(shared_ptr<Logger> _logger):
   logger(_logger),
-  curTime(0) {
+  curTime() {
 #ifdef STATUS_ON_SIGNAL
     if (!g_EventQueue) {
       g_EventQueue = this;
@@ -72,7 +72,7 @@ bool EventQueue::runOneBefore(Time endTime) {
 void EventQueue::init_sim() {
   priority_queue<FuncEntry> temp;
   queue.swap(temp);
-  curTime = 0;
+  curTime = Time();
 }
 
 }

@@ -15,7 +15,7 @@ struct FixedPoint {
   };
 
   inline FixedPoint() : value(0) {}
-  inline FixedPoint(double val) : value(lround(val * Scale)) {}
+  explicit inline FixedPoint(double val) : value(lround(val * Scale)) {}
 
   inline constexpr FixedPoint operator*(long factor) const {
     return FixedPoint(value * factor);
@@ -69,7 +69,7 @@ struct FixedPoint {
   private:
 
   long value;
-  inline FixedPoint(long val, bool _) : value(val) {}
+  inline FixedPoint(long val) : value(val) {}
 
 };
 

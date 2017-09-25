@@ -47,7 +47,7 @@ public SimulationComponent {
 
     typedef Logger::Record::Type Type;
 
-    inline LogRecord(Type _type, Time _duration,
+    inline LogRecord(Type _type, Time _duration = Time(),
         const std::string &_details = ""): type(_type),
            duration(_duration), details(_details) { }
 

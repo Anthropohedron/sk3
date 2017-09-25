@@ -49,7 +49,7 @@ public SimulationComponent {
 
   Task(shared_ptr<EventQueue> _eventQ, const std::string &_name,
       const Time _batch_time, const Quantity _batch_size,
-      const Quantity init_buffer = 0);
+      const Quantity init_buffer = Quantity());
 
   virtual void init_sim();
 
