@@ -61,18 +61,27 @@ void Machine::finishTask() {
     idleStart = eventQ->now();
     ostringstream stats;
     bool first = true;
+    //     duration = sum(task[i].batch_time * counts[task[i]])
+    //
+    // we don't just subtract idleStart from eventQ->now() because we have
+    // to iterate anyway to format stats and reset counts
     Time duration = accumulate(tasks.begin(), tasks.end(), Time(),
         [&stats,&first](Time sum, pair<const shared_ptr<Task>, long> &val) {
+          // number of times the task ran (since last idle)
           const long count = val.second;
           shared_ptr<Task> task = val.first;
+          // format stats output
           if (first) {
             first = false;
           } else {
             stats << " ";
           }
+          // note resetting low water mark
           stats << task->name() << ':' << count
             << ',' << task->resetLowWaterMark();
+          // reset count
           val.second = 0;
+          // add in time spent on this task (since last idle)
           return sum + task->batch_time * count;
         });
     eventQ->log(
