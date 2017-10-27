@@ -5,17 +5,17 @@ logger:
 
 tasks:
   t1:
-    batch_time: 7.2
+    unit_time: 0.8
     batch_size: 9
     deficit: 100
   t2:
-    batch_time: 0.1
+    unit_time: 0.1
     batch_size: 1
   t3:
-    batch_time: 7.2
+    unit_time: 0.8
     batch_size: 9
   t4:
-    batch_time: 0.1
+    unit_time: 0.1
     batch_size: 1
 
 machines:
