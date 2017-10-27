@@ -84,18 +84,19 @@ void Task::take_from_buffer(const Quantity quantity,
 }
 
 void Task::startBatch() {
+  const Quantity count = batch_size;
   if (orders.empty()) {
     for_each(suppliers.begin(), suppliers.end(),
-        [](Supplier &supplier) {
+        [count](Supplier &supplier) {
           shared_ptr<Task> task = supplier.task.lock();
-          task->take_from_buffer(supplier.quantity);
+          task->take_from_buffer(supplier.quantity * count);
         });
   } else {
     shared_ptr<DemandOrder> serving = orders.front();
     for_each(suppliers.begin(), suppliers.end(),
-        [serving](Supplier &supplier) {
+        [count,serving](Supplier &supplier) {
           shared_ptr<Task> task = supplier.task.lock();
-          task->take_from_buffer(supplier.quantity, serving);
+          task->take_from_buffer(supplier.quantity * count, serving);
         });
   }
 }

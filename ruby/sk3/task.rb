@@ -38,7 +38,7 @@ module SK3
 
     def start_batch
       @prereqs.each do |task,quantity|
-        task.take_from_buffer(quantity, @demands.first)
+        task.take_from_buffer(quantity * @batch_size, @demands.first)
       end
     end
 
